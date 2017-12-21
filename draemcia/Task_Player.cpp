@@ -40,7 +40,10 @@ namespace  Player
 				float(ge->screen2DHeight / 2) };
 		speed.x = -2.f;
 		angleLR = Left;
-		hitBase = { -32, -16, 64, 32 };
+
+		forceOfJump = -10.f;
+
+		hitBase = { -24, -16, 48, 32 };
 
 		//★タスクの生成
 
@@ -64,28 +67,30 @@ namespace  Player
 	void  Object::UpDate()
 	{
 		in = DI::GPad_GetState("P1");
-		if (in.LStick.L.on)
+		if (in.LStick.L.down)
 		{
 			speed.x = -2;
 			angleLR = Left;
 		}
-		if (in.LStick.R.on)
+		if (in.LStick.R.down)
 		{
 			speed.x = 2;
 			angleLR = Right;
 		}
 
-		CheckMove();
+		JumpAndFall(in.B1.down);
+
+		OutCheckMove();
+		CheckFoot();
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
 		//キャラクタ描画
-		ML::Box2D  draw(-32, -16, 64, 32);
+		ML::Box2D  draw(-24, -16, 48, 32);
 		draw.Offset(pos);
-		ML::Box2D  src(0, 0, 64, 32);
-		draw.Offset(ge->camera2D.x, ge->camera2D.y);
+		ML::Box2D  src(16, 0, 48, 32);
 		DG::Image_Draw(this->res->imageName, draw, src);
 	}
 

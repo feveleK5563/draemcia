@@ -30,11 +30,10 @@ public:
 	ML::Vec2	moveVec;	//移動ベクトル
 	int			cntTime;	//汎用タイマー
 
-	//落下
-	bool	useGravity;		//落下運動の有無
-	float	forceOfJump;	//ジャンプ力
-	float	fallaccel;		//落下加速度
-	float	fallSpeed;		//落下速度
+	//落下関連
+	const float	fallAccel;	//落下加速度
+	float	forceOfJump;			//ジャンプ力ぅ…ですかねぇ…
+	float	fallSpeed;				//落下速度
 
 	//接触判定
 	bool	hitFoot; //足元接触判定
@@ -55,9 +54,8 @@ public:
 		hitBase(0, 0, 0, 0),
 		moveVec(0.f, 0.f),
 		cntTime(0),
-		useGravity(false),
 		forceOfJump(0.f),
-		fallaccel(0.f),
+		fallAccel(0.4f),
 		fallSpeed(0.f),
 		hitFoot(0),
 		angleLR(Right),
@@ -70,8 +68,10 @@ public:
 
 	//ただの移動
 	virtual void NomalMove();
-	//画面外判定付きの移動
-	virtual void CheckMove();
-	//足元接触判定
-	virtual bool CheckFoot();
+	//画面外判定付きのX軸移動
+	virtual void OutCheckMove();
+	//ジャンプ処理
+	virtual void JumpAndFall(bool = false);
+	//足元接触判定付きのY軸移動
+	virtual void CheckFoot();
 };
