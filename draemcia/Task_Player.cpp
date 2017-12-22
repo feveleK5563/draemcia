@@ -12,7 +12,7 @@ namespace  Player
 	bool  Resource::Initialize()
 	{
 		this->imageName = "PlayerImg";
-		DG::Image_Create(this->imageName, "./data/Image/Chara00.png");
+		DG::Image_Create(this->imageName, "./data/Image/Player.png");
 
 		return true;
 	}
@@ -38,12 +38,24 @@ namespace  Player
 
 		pos = { float(ge->screen2DWidth / 2),
 				float(ge->screen2DHeight / 2) };
-		speed.x = -2.f;
+		basisSpeed = 2.f;
+		swordLength = 16;
+		speed.x = -basisSpeed;
 		angleLR = Left;
+
+		state = State1;	//State1… 通常状態
+						//State2… 下攻撃状態
+						//State3… 死亡
 
 		forceOfJump = -10.f;
 
-		hitBase = { -24, -16, 48, 32 };
+		hitBase = { -16, -16, 32, 32 };
+
+		//キャラチップ読み込み
+		for (int i = 0; i < 4; ++i)
+		{
+			charaChip.emplace_back(new ML::Box2D(80 * (i % 2), 32 * (i / 2), 32, 32));
+		}
 
 		//★タスクの生成
 
@@ -54,7 +66,11 @@ namespace  Player
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-
+		int size = charaChip.size();
+		for (int i = 0; i < size; ++i)
+			delete charaChip[i];
+		charaChip.clear();
+		charaChip.shrink_to_fit();
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
@@ -67,20 +83,13 @@ namespace  Player
 	void  Object::UpDate()
 	{
 		in = DI::GPad_GetState("P1");
-		if (in.LStick.L.down)
-		{
-			speed.x = -2;
-			angleLR = Left;
-		}
-		if (in.LStick.R.down)
-		{
-			speed.x = 2;
-			angleLR = Right;
-		}
+		
+		//ボタン入力による移動速度変更
+		ChangeSpeed();
 
-		JumpAndFall(in.B1.down);
-
+		//画面外判定
 		OutCheckMove();
+		//足元接触判定
 		CheckFoot();
 	}
 	//-------------------------------------------------------------------
@@ -88,10 +97,118 @@ namespace  Player
 	void  Object::Render2D_AF()
 	{
 		//キャラクタ描画
-		ML::Box2D  draw(-24, -16, 48, 32);
-		draw.Offset(pos);
-		ML::Box2D  src(16, 0, 48, 32);
-		DG::Image_Draw(this->res->imageName, draw, src);
+		ML::Box2D draw[3];
+		ML::Box2D src[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			draw[i] = { -16, -16, 32, 32 };
+			switch (state)
+			{
+			case State1: //通常歩行状態
+				draw[i].x += i * 32;
+				src[i] = *charaChip[0];
+				src[i].x += i * 32;
+				break;
+
+			case State2: //急速落下状態
+				src[0] = *charaChip[2];
+				break;
+
+			case State3: //死亡状態
+				src[0] = *charaChip[3];
+				break;
+
+			default:
+				return;
+			}
+			draw[i].Offset(pos);
+			if (angleLR == Left)
+			{
+				src[i].x += src[i].w;
+				src[i].w *= -1;
+				if (state == State1)
+				{
+					//TODO:(+32)のところはswordLengthに変更してね
+					switch (i)
+					{
+					case 1:
+						draw[i].x -= 32 + 32;
+						break;
+
+					case 2:
+						draw[i].x -= 32 * 3 + 32;
+						break;
+					}
+				}
+			}
+			DG::Image_Draw(this->res->imageName, draw[i], src[i]);
+		}
+	}
+
+	//-------------------------------------------------------------------
+	//ボタン入力による移動スピードの変更
+	void Object::ChangeSpeed()
+	{
+		//ボタン入力によってプレイヤーの向きを変える
+		if (in.LStick.L.down)
+		{
+			if (hitFoot && state == State1 &&
+				speed.x == -basisSpeed)
+			{
+				speed.x = -basisSpeed * 2;
+			}
+			else
+			{
+				speed.x = -basisSpeed;
+				angleLR = Left;
+			}
+		}
+		if (in.LStick.R.down)
+		{
+			if (hitFoot && state == State1 &&
+				speed.x == basisSpeed)
+			{
+				speed.x = basisSpeed * 2;
+			}
+			else
+			{
+				speed.x = basisSpeed;
+				angleLR = Right;
+			}
+		}
+
+		//スピードが通常より速いときは
+		//スピードをスピード最大値の10分の1ずつ下げる
+		if (speed.x < -basisSpeed)
+		{
+			speed.x += basisSpeed / 10.f;
+			if (speed.x > -basisSpeed)
+				speed.x = -basisSpeed;
+		}
+		else if (speed.x > basisSpeed)
+		{
+			speed.x -= basisSpeed / 10.f;
+			if (speed.x < basisSpeed)
+				speed.x = basisSpeed;
+		}
+
+		//空中にいるときにジャンプボタンを押すと下攻撃状態に遷移する
+		bool jumpButton = in.B1.down;
+		if (!hitFoot && jumpButton)
+		{
+			state = State2;
+		}
+		JumpAndFall(state == State1 && jumpButton);
+
+		if (state == State2)
+		{
+			fallSpeed = 12.f;
+
+			if (hitFoot)
+			{
+				state = State1;
+			}
+		}
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

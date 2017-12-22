@@ -63,7 +63,7 @@ namespace  GameBG
 		//”wŒi•`‰æ
 		ML::Box2D  draw(0, 0, 480, 270);
 		ML::Box2D  src(0, 0, 480, 270);
-		DG::Image_Draw(this->res->imageName, draw, src);
+		//DG::Image_Draw(this->res->imageName, draw, src);
 	}
 
 	//šššššššššššššššššššššššššššššššššššššššššš

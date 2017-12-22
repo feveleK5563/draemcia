@@ -49,5 +49,10 @@ namespace  Player
 		//追加したい変数・メソッドはここに追加する
 		DI::VGamePad in;
 		string		controllerName;
+
+		float	basisSpeed;		//プレイヤーの基本スピード
+		int		swordLength;	//剣の長さ
+
+		void ChangeSpeed();
 	};
 }

@@ -32,8 +32,8 @@ public:
 
 	//落下関連
 	const float	fallAccel;	//落下加速度
-	float	forceOfJump;			//ジャンプ力ぅ…ですかねぇ…
-	float	fallSpeed;				//落下速度
+	float	forceOfJump;	//ジャンプ力ぅ…ですかねぇ…
+	float	fallSpeed;		//落下速度
 
 	//接触判定
 	bool	hitFoot; //足元接触判定
