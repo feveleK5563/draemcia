@@ -51,8 +51,9 @@ namespace  Player
 		string		controllerName;
 
 		float	basisSpeed;		//プレイヤーの基本スピード
-		int		swordLength;	//剣の長さ
+		unsigned int		swordLength;	//剣の長さ
 
+		void TurnaroundDraw(const ML::Box2D&, const ML::Box2D&, int i);
 		void ChangeSpeed();
 	};
 }

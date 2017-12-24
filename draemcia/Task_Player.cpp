@@ -83,7 +83,7 @@ namespace  Player
 	void  Object::UpDate()
 	{
 		in = DI::GPad_GetState("P1");
-		
+
 		//ボタン入力による移動速度変更
 		ChangeSpeed();
 
@@ -96,53 +96,104 @@ namespace  Player
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
-		//キャラクタ描画
-		ML::Box2D draw[3];
-		ML::Box2D src[3];
-		for (int i = 0; i < 3; ++i)
+		//キャラクタ描画 (「プレイヤー」「剣身」「剣先」の三回)
+		ML::Box2D draw;
+		ML::Box2D src;
+		int *changeDXY = &draw.x,
+			*changeDWH = &draw.w,
+			*changeSXY = &src.x,
+			*changeSWH = &src.w;
+
+		switch (state)
 		{
-			draw[i] = { -16, -16, 32, 32 };
-			switch (state)
+		case BChara::State1:
+			//TODO:[0]は[animcnt]みたいな感じで書き換えてください！オナシャス！センセンシャル！
+			src = *charaChip[0];
+			break;
+
+		case BChara::State2:
+			src = *charaChip[2];
+			changeDXY = &draw.y;
+			changeDWH = &draw.h;
+			changeSXY = &src.y;
+			changeSWH = &src.h;
+			break;
+
+		case BChara::State3:
+			src = *charaChip[3];
+			break;
+
+		default:
+			return;
+		}
+
+		//プレイヤー
+		{
+			draw = { -16, -16, 32, 32 };
+			TurnaroundDraw(draw, src, 0);
+		}
+
+		if (state == State3)
+			return;
+
+		//剣身
+		int plusSL = swordLength;
+		*changeDXY += 32;
+		*changeSXY += 32;
+		while (plusSL != 0)
+		{
+			if (plusSL >= 32)
 			{
-			case State1: //通常歩行状態
-				draw[i].x += i * 32;
-				src[i] = *charaChip[0];
-				src[i].x += i * 32;
-				break;
-
-			case State2: //急速落下状態
-				src[0] = *charaChip[2];
-				break;
-
-			case State3: //死亡状態
-				src[0] = *charaChip[3];
-				break;
-
-			default:
-				return;
+				*changeDWH = 32;
+				*changeSWH  = 32;
+				plusSL -= 32;
 			}
-			draw[i].Offset(pos);
-			if (angleLR == Left)
+			else
 			{
-				src[i].x += src[i].w;
-				src[i].w *= -1;
-				if (state == State1)
-				{
-					//TODO:(+32)のところはswordLengthに変更してね
-					switch (i)
-					{
-					case 1:
-						draw[i].x -= 32 + 32;
-						break;
+				*changeDWH = plusSL;
+				*changeSWH = plusSL;
+				plusSL = 0;
+			}
+			TurnaroundDraw(draw, src, 1);
+			*changeDXY += *changeDWH;
+		}
 
-					case 2:
-						draw[i].x -= 32 * 3 + 32;
-						break;
-					}
+		//剣先
+		{
+			*changeDWH = 32;
+			*changeSXY += 32;
+			*changeSWH = 32;
+			TurnaroundDraw(draw, src, 2);
+		}
+	}
+
+	//-------------------------------------------------------------------
+	//方向転換描画
+	void Object::TurnaroundDraw(const ML::Box2D& draw, const ML::Box2D& src, int i)
+	{
+		ML::Box2D cpydr = draw;
+		ML::Box2D cpysr = src;
+		if (angleLR == Left)
+		{
+			cpysr.x += src.w;
+			cpysr.w *= -1;
+			if (state == State1)
+			{
+				switch (i)
+				{
+				case 1:
+					cpydr.x -= 32 + swordLength;
+					break;
+
+				case 2:
+					cpydr.x -= (32 + swordLength) * 2;
+					break;
 				}
 			}
-			DG::Image_Draw(this->res->imageName, draw[i], src[i]);
 		}
+
+		cpydr.Offset(pos);
+		DG::Image_Draw(this->res->imageName, cpydr, cpysr);
 	}
 
 	//-------------------------------------------------------------------
