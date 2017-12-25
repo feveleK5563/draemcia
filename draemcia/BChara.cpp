@@ -6,6 +6,41 @@
 #include "MyPG.h"
 
 //-------------------------------------------------------------------
+//“–‚½‚è”»’è‰Â‹‰»—p‰æ‘œ‚Ì“Ç‚İ‚İ‚Æ‰ğ•ú
+void BChara::FrameCreate()
+{
+	DG::Image_Create("FrameRed", "./data/image/HitBaseFrameRed.png");
+	DG::Image_Create("FrameBlue", "./data/image/HitBaseFrameBlue.png");
+}
+void BChara::FrameErase()
+{
+	DG::Image_Erase("FrameRed");
+	DG::Image_Erase("FrameBlue");
+}
+//-------------------------------------------------------------------
+//“–‚½‚è”»’è‚ğ‰Â‹‰»‚³‚¹‚é
+void BChara::RenderFrameRed(const ML::Box2D& hB)
+{
+	if (!RendFrameFlag)
+		return;
+
+	ML::Box2D draw = hB.OffsetCopy(pos);
+	ML::Box2D src = { 0, 0, 32, 32 };
+	DG::Image_Draw("FrameRed", draw, src);
+
+}
+void BChara::RenderFrameBlue(const ML::Box2D& hB)
+{
+	if (!RendFrameFlag)
+		return;
+
+	ML::Box2D draw = hB.OffsetCopy(pos);
+	ML::Box2D src = { 0, 0, 32, 32 };
+	DG::Image_Draw("FrameBlue", draw, src);
+}
+
+
+//-------------------------------------------------------------------
 //‚½‚¾‚ÌˆÚ“®
 void BChara::NomalMove()
 {

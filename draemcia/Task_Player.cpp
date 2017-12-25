@@ -47,15 +47,20 @@ namespace  Player
 						//State2… 下攻撃状態
 						//State3… 死亡
 
-		forceOfJump = -10.f;
+		forceOfJump = -9.5f;
 
 		hitBase = { -16, -16, 32, 32 };
 
 		//キャラチップ読み込み
-		for (int i = 0; i < 4; ++i)
+		for (int y = 0; y < 2; ++y)
 		{
-			charaChip.emplace_back(new ML::Box2D(80 * (i % 2), 32 * (i / 2), 32, 32));
+			for (int x = 0; x < 6; ++x)
+			{
+				charaChip.emplace_back(new ML::Box2D(x * 32, y * 32, 32, 32));
+			}
 		}
+
+		FrameCreate();
 
 		//★タスクの生成
 
@@ -71,6 +76,8 @@ namespace  Player
 			delete charaChip[i];
 		charaChip.clear();
 		charaChip.shrink_to_fit();
+
+		FrameErase();
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
@@ -91,6 +98,9 @@ namespace  Player
 		OutCheckMove();
 		//足元接触判定
 		CheckFoot();
+
+		//アニメーション
+		++animCnt;
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
@@ -98,29 +108,24 @@ namespace  Player
 	{
 		//キャラクタ描画 (「プレイヤー」「剣身」「剣先」の三回)
 		ML::Box2D draw;
-		ML::Box2D src;
+		int srcNum;
 		int *changeDXY = &draw.x,
-			*changeDWH = &draw.w,
-			*changeSXY = &src.x,
-			*changeSWH = &src.w;
+			*changeDWH = &draw.w;
 
 		switch (state)
 		{
 		case BChara::State1:
-			//TODO:[0]は[animcnt]みたいな感じで書き換えてください！オナシャス！センセンシャル！
-			src = *charaChip[0];
+			srcNum = (animCnt / 10 % 2) * 3;
 			break;
 
 		case BChara::State2:
-			src = *charaChip[2];
+			srcNum = 6;
 			changeDXY = &draw.y;
 			changeDWH = &draw.h;
-			changeSXY = &src.y;
-			changeSWH = &src.h;
 			break;
 
 		case BChara::State3:
-			src = *charaChip[3];
+			srcNum = 9;
 			break;
 
 		default:
@@ -130,22 +135,29 @@ namespace  Player
 		//プレイヤー
 		{
 			draw = { -16, -16, 32, 32 };
-			TurnaroundDraw(draw, src, 0);
+			TurnaroundDraw(draw, *charaChip[srcNum], 0);
 		}
 
+		//墓状態は以下の処理不要
 		if (state == State3)
 			return;
 
 		//剣身
 		int plusSL = swordLength;
 		*changeDXY += 32;
-		*changeSXY += 32;
+		ML::Box2D src;
+		int* changeSWH;
+		if (srcNum == 6)
+			changeSWH = &src.h;
+		else
+			changeSWH = &src.w;
 		while (plusSL != 0)
 		{
+			src = *charaChip[srcNum + 1];
 			if (plusSL >= 32)
 			{
 				*changeDWH = 32;
-				*changeSWH  = 32;
+				*changeSWH = 32;
 				plusSL -= 32;
 			}
 			else
@@ -161,10 +173,11 @@ namespace  Player
 		//剣先
 		{
 			*changeDWH = 32;
-			*changeSXY += 32;
-			*changeSWH = 32;
-			TurnaroundDraw(draw, src, 2);
+			TurnaroundDraw(draw, *charaChip[srcNum + 2], 2);
 		}
+
+		//当たり判定可視化計画
+		RenderFrameBlue(hitBase);
 	}
 
 	//-------------------------------------------------------------------
@@ -200,35 +213,43 @@ namespace  Player
 	//ボタン入力による移動スピードの変更
 	void Object::ChangeSpeed()
 	{
-		//ボタン入力によってプレイヤーの向きを変える
-		if (in.LStick.L.down)
+		//プレイヤーを向いている方向に進ませる
+		bool Ldown = in.LStick.L.down,
+			 Rdown = in.LStick.R.down;
+		if (angleLR == Left)
 		{
-			if (hitFoot && state == State1 &&
-				speed.x == -basisSpeed)
+			if (Ldown && speed.x == -basisSpeed && hitFoot) //スピード上昇
 			{
-				speed.x = -basisSpeed * 2;
+				speed.x = -basisSpeed * 2.2f;
 			}
-			else
+			if (Rdown) //方向転換
+			{
+				angleLR = Right;
+				speed.x = basisSpeed;
+			}
+			if (!speed.x) //強制落下からの復帰
 			{
 				speed.x = -basisSpeed;
-				angleLR = Left;
 			}
 		}
-		if (in.LStick.R.down)
+		else
 		{
-			if (hitFoot && state == State1 &&
-				speed.x == basisSpeed)
+			if (Rdown && speed.x == basisSpeed && hitFoot)
 			{
-				speed.x = basisSpeed * 2;
+				speed.x = basisSpeed * 2.2f;
 			}
-			else
+			if (Ldown) 
+			{
+				angleLR = Left;
+				speed.x = -basisSpeed;
+			}
+			if (!speed.x)
 			{
 				speed.x = basisSpeed;
-				angleLR = Right;
 			}
 		}
 
-		//スピードが通常より速いときは
+		//スピードの絶対値が最大値より高いときは
 		//スピードをスピード最大値の10分の1ずつ下げる
 		if (speed.x < -basisSpeed)
 		{
@@ -249,11 +270,15 @@ namespace  Player
 		{
 			state = State2;
 		}
-		JumpAndFall(state == State1 && jumpButton);
+		else 
+		{
+			JumpAndFall(jumpButton);
+		}
 
 		if (state == State2)
 		{
-			fallSpeed = 12.f;
+			fallSpeed += 1.5f;
+			speed.x = 0.f;
 
 			if (hitFoot)
 			{

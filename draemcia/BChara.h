@@ -11,6 +11,8 @@ class BChara : public BTask
 public:
 	typedef shared_ptr<BChara>		SP;
 	typedef weak_ptr<BChara>		WP;
+
+	const bool RendFrameFlag;
 public:
 	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 	//キャラクタ共通メンバ変数
@@ -32,15 +34,15 @@ public:
 
 	//落下関連
 	const float	fallAccel;	//落下加速度
-	float	forceOfJump;	//ジャンプ力ぅ…ですかねぇ…
-	float	fallSpeed;		//落下速度
+	float		forceOfJump;	//ジャンプ力ぅ…ですかねぇ…
+	float		fallSpeed;		//落下速度
 
 	//接触判定
 	bool	hitFoot; //足元接触判定
 
 	//アニメーション
 	vector<ML::Box2D*>	charaChip;	//キャラクタの素材
-	float				animCnt;	//アニメーションカウンタ
+	int					animCnt;	//アニメーションカウンタ
 
 	//左右の向き(2D横視点ゲーム専用)
 	enum AngleLR{Left, Right};
@@ -48,6 +50,7 @@ public:
 
 	//メンバ変数の初期化
 	BChara():
+		RendFrameFlag(true),
 		state(Non),
 		pos(0.f, 0.f),
 		speed(0.f, 0.f),
@@ -59,9 +62,20 @@ public:
 		fallSpeed(0.f),
 		hitFoot(0),
 		angleLR(Right),
-		animCnt(0.f){}
+		animCnt(0){}
 
 	virtual ~BChara(){}
+
+	//--------------------------------------------------------
+	//当たり判定可視化計画
+
+	//当たり判定可視化用画像読み込みと解放
+	//(どこかで一回だけ読み込んでくれたらおじさん嬉しいなぁ(失禁))
+	virtual void FrameCreate();
+	virtual void FrameErase();
+	//当たり判定可視化
+	virtual void RenderFrameRed(const ML::Box2D&);
+	virtual void RenderFrameBlue(const ML::Box2D&);
 
 	//--------------------------------------------------------
 	//以下キャラクタ共通メソッド
