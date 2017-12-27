@@ -50,6 +50,7 @@ namespace  Player
 		forceOfJump = -9.5f;
 
 		hitBase = { -16, -16, 32, 32 };
+		swordHitBase = { 16, -16, (int)swordLength + 7, 32 };
 
 		//キャラチップ読み込み
 		for (int y = 0; y < 2; ++y)
@@ -178,6 +179,7 @@ namespace  Player
 
 		//当たり判定可視化計画
 		RenderFrameBlue(hitBase);
+		RenderFrameRed(swordHitBase);
 	}
 
 	//-------------------------------------------------------------------
@@ -218,6 +220,7 @@ namespace  Player
 			 Rdown = in.LStick.R.down;
 		if (angleLR == Left)
 		{
+			swordHitBase = { -((int)swordLength + 7) - 16, -16, (int)swordLength + 7, 32 };
 			if (Ldown && speed.x == -basisSpeed && hitFoot) //スピード上昇
 			{
 				speed.x = -basisSpeed * 2.2f;
@@ -234,6 +237,7 @@ namespace  Player
 		}
 		else
 		{
+			swordHitBase = { 16, -16, (int)swordLength + 7, 32 };
 			if (Rdown && speed.x == basisSpeed && hitFoot)
 			{
 				speed.x = basisSpeed * 2.2f;
@@ -277,6 +281,7 @@ namespace  Player
 
 		if (state == State2)
 		{
+			swordHitBase = { -16, 16, 32, (int)swordLength + 7 };
 			fallSpeed += 1.5f;
 			speed.x = 0.f;
 

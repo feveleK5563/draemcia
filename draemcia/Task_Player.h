@@ -52,6 +52,7 @@ namespace  Player
 
 		float	basisSpeed;		//プレイヤーの基本スピード
 		unsigned int		swordLength;	//剣の長さ
+		ML::Box2D swordHitBase;		//剣の当たり判定
 
 		void TurnaroundDraw(const ML::Box2D&, const ML::Box2D&, int i);
 		void ChangeSpeed();
