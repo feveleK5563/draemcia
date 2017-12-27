@@ -7,6 +7,7 @@
 
 //-------------------------------------------------------------------
 //当たり判定可視化用画像の読み込みと解放
+//どっか一ヶ所だけで呼んでくれぃ
 void BChara::FrameCreate()
 {
 	DG::Image_Create("FrameRed", "./data/image/HitBaseFrameRed.png");
@@ -74,7 +75,7 @@ void BChara::OutCheckMove()
 
 //-------------------------------------------------------------------
 //ジャンプ処理
-void BChara::JumpAndFall(bool jumpFlag)
+void BChara::FallAndJump(bool jumpFlag)
 {
 	//落下運動
 	if (hitFoot)
@@ -91,7 +92,7 @@ void BChara::JumpAndFall(bool jumpFlag)
 
 //-------------------------------------------------------------------
 //足元接触判定込みのY軸移動
-void BChara::CheckFoot()
+void BChara::CheckFootMove()
 {
 	auto field = ge->GetTask_One_GN<Field::Object>("フィールド", "フィールド");
 	if (field == nullptr)

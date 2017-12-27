@@ -50,7 +50,7 @@ public:
 
 	//メンバ変数の初期化
 	BChara():
-		RendFrameFlag(true),
+		RendFrameFlag(true),	//当たり判定の表示可否
 		state(Non),
 		pos(0.f, 0.f),
 		speed(0.f, 0.f),
@@ -85,7 +85,7 @@ public:
 	//画面外判定付きのX軸移動
 	virtual void OutCheckMove();
 	//ジャンプ処理
-	virtual void JumpAndFall(bool = false);
+	virtual void FallAndJump(bool);
 	//足元接触判定付きのY軸移動
-	virtual void CheckFoot();
+	virtual void CheckFootMove();
 };

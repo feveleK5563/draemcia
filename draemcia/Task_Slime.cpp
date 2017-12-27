@@ -1,26 +1,25 @@
 //-------------------------------------------------------------------
-//ゲーム本編
+//
 //-------------------------------------------------------------------
 #include  "MyPG.h"
-#include  "Task_Game.h"
-#include  "Task_GameBG.h"
-#include  "Task_Field.h"
-#include  "Task_Player.h"
 #include  "Task_Slime.h"
 
-namespace  Game
+namespace  Slime
 {
 	Resource::WP  Resource::instance;
 	//-------------------------------------------------------------------
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
+		imageName = "Slime";
+		DG::Image_Create(imageName, "./data/image/Slime.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
 	//リソースの解放
 	bool  Resource::Finalize()
 	{
+		DG::Image_Erase(imageName);
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -33,16 +32,12 @@ namespace  Game
 		this->res = Resource::Create();
 
 		//★データ初期化
+		render2D_Priority[1] = 0.8f;
 
+		pos = { 270, 100 };
+		hitBase = { -16, -16, 32, 32 };
+		
 		//★タスクの生成
-		//背景タスク
-		auto  bg = GameBG::Object::Create(true);
-		//フィールドタスク
-		auto  fd = Field::Object::Create(true);
-		//プレイヤタスク
-		auto  pl = Player::Object::Create(true);
-		//スライムタスク(テスト用)
-		auto  sm = Slime::Object::Create(true);
 
 		return  true;
 	}
@@ -51,10 +46,6 @@ namespace  Game
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-		ge->KillAll_G("本編");
-		ge->KillAll_G("フィールド");
-		ge->KillAll_G("プレイヤ");
-		ge->KillAll_G("敵");
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
@@ -66,17 +57,21 @@ namespace  Game
 	//「更新」１フレーム毎に行う処理
 	void  Object::UpDate()
 	{
-		auto in = DI::GPad_GetState("P1");
+		speed.x = 1.f;
 
-		if (in.ST.down) {
-			//自身に消滅要請
-			this->Kill();
-		}
+		FallAndJump(false);
+		OutCheckMove();
+		CheckFootMove();
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
+		ML::Box2D src = { 0, 32, 32, 32 };
+		ML::Box2D draw = { -16, -16, 32, 32 };
+		draw.Offset(pos);
+		DG::Image_Draw(res->imageName, draw, src);
+		RenderFrameRed(hitBase);
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

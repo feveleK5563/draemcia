@@ -98,7 +98,7 @@ namespace  Player
 		//画面外判定
 		OutCheckMove();
 		//足元接触判定
-		CheckFoot();
+		CheckFootMove();
 
 		//アニメーション
 		++animCnt;
@@ -208,7 +208,7 @@ namespace  Player
 		}
 
 		cpydr.Offset(pos);
-		DG::Image_Draw(this->res->imageName, cpydr, cpysr);
+		DG::Image_Draw(res->imageName, cpydr, cpysr);
 	}
 
 	//-------------------------------------------------------------------
@@ -276,7 +276,7 @@ namespace  Player
 		}
 		else 
 		{
-			JumpAndFall(jumpButton);
+			FallAndJump(jumpButton);
 		}
 
 		if (state == State2)

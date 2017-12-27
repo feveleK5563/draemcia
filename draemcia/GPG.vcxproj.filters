@@ -124,6 +124,9 @@
     <ClCompile Include="Task_Field.cpp">
       <Filter>MyPG\Tasks\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Task_Slime.cpp">
+      <Filter>MyPG\Tasks\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myLib.h">
@@ -193,6 +196,9 @@
       <Filter>MyPG\Tasks\Game</Filter>
     </ClInclude>
     <ClInclude Include="Task_Field.h">
+      <Filter>MyPG\Tasks\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Task_Slime.h">
       <Filter>MyPG\Tasks\Game</Filter>
     </ClInclude>
   </ItemGroup>
