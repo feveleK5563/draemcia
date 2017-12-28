@@ -50,7 +50,7 @@ namespace  Player
 		forceOfJump = -9.5f;
 
 		hitBase = { -16, -16, 32, 32 };
-		swordHitBase = { 16, -16, (int)swordLength + 7, 32 };
+		swordHitBase = { 16, -16, (int)swordLength + 9, 20 };
 
 		//キャラチップ読み込み
 		for (int y = 0; y < 2; ++y)
@@ -130,6 +130,8 @@ namespace  Player
 			break;
 
 		default:
+			//座標を何処か遠くへぶっ飛ばす
+			pos = { -1000, -1000 };
 			return;
 		}
 
@@ -220,7 +222,7 @@ namespace  Player
 			 Rdown = in.LStick.R.down;
 		if (angleLR == Left)
 		{
-			swordHitBase = { -((int)swordLength + 7) - 16, -16, (int)swordLength + 7, 32 };
+			swordHitBase = { -((int)swordLength + 9) - 16, -16, (int)swordLength + 9, 32 };
 			if (Ldown && speed.x == -basisSpeed && hitFoot) //スピード上昇
 			{
 				speed.x = -basisSpeed * 2.2f;
@@ -237,7 +239,7 @@ namespace  Player
 		}
 		else
 		{
-			swordHitBase = { 16, -16, (int)swordLength + 7, 32 };
+			swordHitBase = { 16, -16, (int)swordLength + 9, 32 };
 			if (Rdown && speed.x == basisSpeed && hitFoot)
 			{
 				speed.x = basisSpeed * 2.2f;

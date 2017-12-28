@@ -33,12 +33,12 @@ public:
 	int			cntTime;	//汎用タイマー
 
 	//落下関連
-	const float	fallAccel;	//落下加速度
+	const float	fallAccel;		//落下加速度
 	float		forceOfJump;	//ジャンプ力ぅ…ですかねぇ…
 	float		fallSpeed;		//落下速度
 
 	//接触判定
-	bool	hitFoot; //足元接触判定
+	bool	hitFoot;	//足元接触判定
 
 	//アニメーション
 	vector<ML::Box2D*>	charaChip;	//キャラクタの素材
@@ -50,7 +50,7 @@ public:
 
 	//メンバ変数の初期化
 	BChara():
-		RendFrameFlag(true),	//当たり判定の表示可否
+		RendFrameFlag(false),	//当たり判定の表示可否
 		state(Non),
 		pos(0.f, 0.f),
 		speed(0.f, 0.f),

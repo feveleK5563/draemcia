@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 //
 //-------------------------------------------------------------------
-#include "BChara.h"
+#include "EChara.h"
 
 namespace  Slime
 {
@@ -27,7 +27,7 @@ namespace  Slime
 		string		imageName;
 	};
 	//-------------------------------------------------------------------
-	class  Object : public  BChara
+	class  Object : public  EChara
 	{
 	public:
 		virtual  ~Object();
@@ -49,6 +49,8 @@ namespace  Slime
 	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 		//追加したい変数・メソッドはここに追加する
 		//BCharaに含まれないモノのみここに追加する
-
+		void Move1();
+		void Move2();
+		void Move3();
 	};
 }

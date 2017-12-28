@@ -2,24 +2,21 @@
 //
 //-------------------------------------------------------------------
 #include  "MyPG.h"
-#include  "Task_Slime.h"
+#include  "該当する.h"
 
-namespace  Slime
+namespace  「ネームスペース名」
 {
 	Resource::WP  Resource::instance;
 	//-------------------------------------------------------------------
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		imageName = "Slime";
-		DG::Image_Create(imageName, "./data/image/Slime.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
 	//リソースの解放
 	bool  Resource::Finalize()
 	{
-		DG::Image_Erase(imageName);
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -32,23 +29,7 @@ namespace  Slime
 		this->res = Resource::Create();
 
 		//★データ初期化
-		render2D_Priority[1] = 0.8f;
-		state = State1;		//State1 = 画面下から這い上がる動き
-							//State2 = 陸上をのそのそ
-							//State3 = 死ぬ間際
-
-		pos = { 270, float(ge->screen2DHeight) + 16 };
-		hitBase = { -16, -16, 32, 32 };
 		
-		//キャラチップ読み込み
-		for (int y = 0; y < 3; ++y)
-		{
-			for (int x = 0; x < 2; ++x)
-			{
-				charaChip.emplace_back(new ML::Box2D(x * 32, y * 32, 32, 32));
-			}
-		}
-
 		//★タスクの生成
 
 		return  true;
@@ -58,11 +39,7 @@ namespace  Slime
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-		int size = charaChip.size();
-		for (int i = 0; i < size; ++i)
-			delete charaChip[i];
-		charaChip.clear();
-		charaChip.shrink_to_fit();
+
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
@@ -74,112 +51,12 @@ namespace  Slime
 	//「更新」１フレーム毎に行う処理
 	void  Object::UpDate()
 	{
-		switch (state)
-		{
-		case BChara::State1:
-			Move1();
-			break;
-
-		case BChara::State2:
-			Move2();
-			break;
-
-		case BChara::State3:
-			Move3();
-			break;
-
-		default:
-			return;
-		}
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
-		ML::Box2D src;
-		ML::Color color = { 1.f, 1.f, 1.f, 1.f };
-		switch (state)
-		{
-		case BChara::State1:
-			src = *charaChip[animCnt / 10 % 2];
-			break;
-
-		case BChara::State2:
-			src = *charaChip[(animCnt / 10 % 2) + 2];
-			break;
-
-		case BChara::State3:
-			src = *charaChip[4];
-			if (animCnt > 3)
-				color = { 1.f, 1.f, 0.1f, 0.1f };
-			break;
-
-		default:
-			return;
-		}
-
-		ML::Box2D draw = { -16, -16, 32, 32 };
-		draw.Offset(pos);
-		DG::Image_Draw(res->imageName, draw, src, color);
-		RenderFrameRed(hitBase);
 	}
-
-	//-------------------------------------------------------------------
-	//State1時の動作
-	void Object::Move1()
-	{
-		++animCnt;
-
-		if (pos.y < ge->screen2DHeight - 30)
-		{
-			speed.y = -1.5f;
-			if (pos.y < ge->screen2DHeight - 45)
-			{
-				pos.y = float(ge->screen2DHeight) - 51;
-				state = State2;
-				speed.y = 0.f;
-				animCnt = 0;
-			}
-		}
-		else
-		{
-			speed.y = -0.7f;
-		}
-
-		NomalMove();
-	}
-
-	//-------------------------------------------------------------------
-	//State2時の動作
-	void Object::Move2()
-	{
-		speed.x = 1.f;
-		++animCnt;
-
-		FallAndJump(false);
-		OutCheckMove();
-		CheckFootMove();
-
-		if (!DamageEnemy())
-			DamagePlayer();
-	}
-
-	//-------------------------------------------------------------------
-	//State3時の動作
-	void Object::Move3()
-	{
-		if (animCnt > 10)
-		{
-			state = Non;
-		}
-		else
-		{
-			++animCnt;
-		}
-	}
-
-	//-------------------------------------------------------------------
-	//State3時の動作
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 	//以下は基本的に変更不要なメソッド

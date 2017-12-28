@@ -19,7 +19,8 @@ void BChara::FrameErase()
 	DG::Image_Erase("FrameBlue");
 }
 //-------------------------------------------------------------------
-//“–‚½‚è”»’è‚ğ‰Â‹‰»‚³‚¹‚é
+//“–‚½‚è”»’è‚ğ‰Â‹‰»‚³‚¹‚é(Red(Ô)‚ÆBlue(Â))
+//ˆø”F‰Â‹‰»‚³‚¹‚½‚¢“–‚½‚è”»’è
 void BChara::RenderFrameRed(const ML::Box2D& hB)
 {
 	if (!RendFrameFlag)
