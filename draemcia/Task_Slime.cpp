@@ -37,11 +37,12 @@ namespace  Slime
 							//State2 = 陸上をのそのそ
 							//State3 = 死ぬ間際
 
-		pos = { 270, float(ge->screen2DHeight) + 16 };
+		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 32,
+				float(ge->screen2DHeight) + 16 };
 		hitBase = { -16, -16, 32, 32 };
 		
 		//キャラチップ読み込み
-		for (int y = 0; y < 3; ++y)
+		for (int y = 0; y < 4; ++y)
 		{
 			for (int x = 0; x < 2; ++x)
 			{
@@ -96,26 +97,27 @@ namespace  Slime
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
+		if (state == Non)
+			return;
+
 		ML::Box2D src;
 		ML::Color color = { 1.f, 1.f, 1.f, 1.f };
-		switch (state)
+
+		if (state == State3)
 		{
-		case BChara::State1:
-			src = *charaChip[animCnt / 10 % 2];
-			break;
-
-		case BChara::State2:
-			src = *charaChip[(animCnt / 10 % 2) + 2];
-			break;
-
-		case BChara::State3:
-			src = *charaChip[4];
+			src = *charaChip[stateAnim];
 			if (animCnt > 3)
 				color = { 1.f, 1.f, 0.1f, 0.1f };
-			break;
+		}
+		else
+		{
+			src = *charaChip[animCnt / 10 % 2 + stateAnim];
+		}
 
-		default:
-			return;
+		if (angleLR == Left) //反転
+		{
+			src.x += src.w;
+			src.w *= -1;
 		}
 
 		ML::Box2D draw = { -16, -16, 32, 32 };
@@ -137,8 +139,11 @@ namespace  Slime
 			{
 				pos.y = float(ge->screen2DHeight) - 51;
 				state = State2;
+				stateAnim = 2;
 				speed.y = 0.f;
+
 				animCnt = 0;
+				moveType = rand() % 3;
 			}
 		}
 		else
@@ -147,20 +152,58 @@ namespace  Slime
 		}
 
 		NomalMove();
+
+		if (DamageEnemy())
+			stateAnim += 4;
 	}
 
 	//-------------------------------------------------------------------
 	//State2時の動作
 	void Object::Move2()
 	{
-		speed.x = 1.f;
+		switch (moveType)
+		{
+		case 0:	//待機
+			speed.x = 0;
+			++cntTime;
+			if (cntTime > 60)
+			{
+				cntTime = 0;
+				moveType = rand() % 2 + 1;
+			}
+			break;
+
+		case 1:	//右に向いて移動
+			angleLR = Right;
+			speed.x = 1.f;
+			++cntTime;
+			if (cntTime > 90)
+			{
+				cntTime = 0;
+				moveType = 0;
+			}
+			break;
+
+		case 2: //左に向いて移動
+			angleLR = Left;
+			speed.x = -1.f;
+			++cntTime;
+			if (cntTime > 90)
+			{
+				cntTime = 0;
+				moveType = 0;
+			}
+			break;
+		}
 		++animCnt;
 
 		FallAndJump(false);
 		OutCheckMove();
 		CheckFootMove();
 
-		if (!DamageEnemy())
+		if (DamageEnemy())
+			stateAnim += 4;
+		else
 			DamagePlayer();
 	}
 
@@ -171,6 +214,7 @@ namespace  Slime
 		if (animCnt > 10)
 		{
 			state = Non;
+			Kill();
 		}
 		else
 		{
