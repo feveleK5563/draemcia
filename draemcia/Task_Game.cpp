@@ -34,6 +34,7 @@ namespace  Game
 
 		//★データ初期化
 		srand((unsigned)time(NULL));
+		monsterAmount = 0;
 
 		//★タスクの生成
 		//背景タスク
@@ -68,6 +69,8 @@ namespace  Game
 	void  Object::UpDate()
 	{
 		auto in = DI::GPad_GetState("P1");
+
+		//if ()
 
 		if (in.ST.down) {
 			//自身に消滅要請
