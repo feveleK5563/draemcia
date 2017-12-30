@@ -214,7 +214,7 @@ namespace  Slime
 		if (animCnt > 10)
 		{
 			state = Non;
-			Kill();
+			KillMeBaby();
 		}
 		else
 		{

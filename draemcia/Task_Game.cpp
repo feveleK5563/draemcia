@@ -35,7 +35,8 @@ namespace  Game
 		//★データ初期化
 		srand((unsigned)time(NULL));
 		monsterAmount = 0;
-
+		appMonsterTime = 0;
+		
 		//★タスクの生成
 		//背景タスク
 		auto  bg = GameBG::Object::Create(true);
@@ -43,8 +44,6 @@ namespace  Game
 		auto  fd = Field::Object::Create(true);
 		//プレイヤタスク
 		auto  pl = Player::Object::Create(true);
-		//スライムタスク(テスト用)
-		auto  sm = Slime::Object::Create(true);
 
 		return  true;
 	}
@@ -70,11 +69,16 @@ namespace  Game
 	{
 		auto in = DI::GPad_GetState("P1");
 
-		//if ()
+		if ((monsterAmount < MonsterMaxAmount) &&
+			!(appMonsterTime++ % 30))
+		{
+			auto sm = Slime::Object::Create(true);
+			++monsterAmount;
+		}
 
 		if (in.ST.down) {
 			//自身に消滅要請
-			this->Kill();
+			Kill();
 		}
 	}
 	//-------------------------------------------------------------------

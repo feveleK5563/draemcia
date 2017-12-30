@@ -51,6 +51,8 @@ namespace  Player
 		string		controllerName;
 
 		float			basisSpeed;		//プレイヤーの基本スピード
+		const int		LifeMax = 10;	//体力最大値
+		unsigned int	life;			//プレイヤーの体力
 		unsigned int	swordLength;	//剣の長さ
 		ML::Box2D		swordHitBase;	//剣の当たり判定
 

@@ -24,4 +24,5 @@ public:
 
 	virtual bool DamagePlayer();
 	virtual bool DamageEnemy();
+	virtual void KillMeBaby();
 };

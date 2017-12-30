@@ -39,6 +39,7 @@ namespace  Player
 		pos = { float(ge->screen2DWidth / 2),
 				float(ge->screen2DHeight / 2) };
 		basisSpeed = 2.f;
+		life = LifeMax;
 		swordLength = 16;
 		speed.x = -basisSpeed;
 		angleLR = Left;
@@ -222,7 +223,7 @@ namespace  Player
 			 Rdown = in.LStick.R.down;
 		if (angleLR == Left)
 		{
-			swordHitBase = { -((int)swordLength + 9) - 16, -16, (int)swordLength + 9, 32 };
+			swordHitBase = { -((int)swordLength + 8) - 16, -5, (int)swordLength + 8, 21 };
 			if (Ldown && speed.x == -basisSpeed && hitFoot) //スピード上昇
 			{
 				speed.x = -basisSpeed * 2.2f;
@@ -239,7 +240,7 @@ namespace  Player
 		}
 		else
 		{
-			swordHitBase = { 16, -16, (int)swordLength + 9, 32 };
+			swordHitBase = { 16, -5, (int)swordLength + 8, 21 };
 			if (Rdown && speed.x == basisSpeed && hitFoot)
 			{
 				speed.x = basisSpeed * 2.2f;
