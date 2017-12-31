@@ -23,7 +23,7 @@ namespace  GameBG
 		static   WP  instance;
 		static  Resource::SP  Create();
 		//共有する変数はここに追加する
-		string	imageName;
+		string	imageBack, imageSky;
 	};
 	//-------------------------------------------------------------------
 	class  Object : public  BTask
@@ -47,5 +47,6 @@ namespace  GameBG
 	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 	public:
 		//追加したい変数・メソッドはここに追加する
+		float skyLoop;
 	};
 }

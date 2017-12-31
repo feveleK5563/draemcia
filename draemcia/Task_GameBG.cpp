@@ -11,15 +11,18 @@ namespace  GameBG
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		this->imageName = "BGImg";
-		//DG::Image_Create(this->imageName, "./data/Image/GameBG.bmp");
+		imageBack = "BGImg";
+		DG::Image_Create(imageBack, "./data/Image/Back.png");
+		imageSky = "Sky";
+		DG::Image_Create(imageSky, "./data/Image/Sky.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
 	//リソースの解放
 	bool  Resource::Finalize()
 	{
-		//DG::Image_Erase(this->imageName);
+		DG::Image_Erase(imageBack);
+		DG::Image_Erase(imageSky);
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -33,6 +36,7 @@ namespace  GameBG
 
 		//★データ初期化
 		this->render2D_Priority[1] = 1.0f;
+		skyLoop = 0.f;
 
 		//★タスクの生成
 
@@ -55,15 +59,27 @@ namespace  GameBG
 	//「更新」１フレーム毎に行う処理
 	void  Object::UpDate()
 	{
+		if ((skyLoop -= 0.5f) < -600.f)
+		{
+			skyLoop = 0;
+		}
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
 		//背景描画
-		ML::Box2D  draw(0, 0, 480, 270);
-		ML::Box2D  src(0, 0, 480, 270);
-		//DG::Image_Draw(this->res->imageName, draw, src);
+		for (int i = 0; i < 2; ++i)
+		{
+			ML::Box2D draw(skyLoop + (i * 600), 0, 600, 270);
+			ML::Box2D src(0, 0, 600, 270);
+			DG::Image_Draw(res->imageSky, draw, src);
+		}
+		{
+			ML::Box2D  draw(0, 0, 600, 270);
+			ML::Box2D  src(0, 0, 600, 270);
+			DG::Image_Draw(res->imageBack, draw, src);
+		}
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

@@ -47,6 +47,7 @@ bool EChara::DamagePlayer()
 		if (--player->life <= 0)
 		{
 			player->state = State3;
+			player->render2D_Priority[1] = 0.4f;
 		}
 		else
 		{

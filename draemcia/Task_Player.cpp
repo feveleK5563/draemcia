@@ -34,7 +34,7 @@ namespace  Player
 
 		//šƒf[ƒ^‰Šú‰»
 		controllerName = "P1";
-		render2D_Priority[1] = 0.5f;
+		render2D_Priority[1] = 0.6f;
 
 		pos = { float(ge->screen2DWidth / 2),
 				float(ge->screen2DHeight / 2) };

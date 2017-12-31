@@ -60,10 +60,10 @@ namespace  Field
 	//u‚Q‚c•`‰æv‚PƒtƒŒ[ƒ€–ˆ‚És‚¤ˆ—
 	void  Object::Render2D_AF()
 	{
-		ML::Box2D src(0, 0, 480, 36);
+		ML::Box2D src(0, 0, 480, 72);
 		for (int i = 0; i < 2; ++i)
 		{
-			ML::Box2D draw(480 * i, ge->screen2DHeight - groundBorder, 480, groundBorder);
+			ML::Box2D draw(480 * i, ge->screen2DHeight - groundBorder - 36, 480, groundBorder + 36);
 			DG::Image_Draw(imageName, draw, src);
 		}
 	}

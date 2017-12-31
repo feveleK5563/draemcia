@@ -32,7 +32,7 @@ namespace  Slime
 		this->res = Resource::Create();
 
 		//šƒf[ƒ^‰Šú‰»
-		render2D_Priority[1] = 0.8f;
+		render2D_Priority[1] = 0.5f;
 		state = State1;		//State1 = ‰æ–Ê‰º‚©‚ç”‡‚¢ã‚ª‚é“®‚«
 							//State2 = —¤ã‚ğ‚Ì‚»‚Ì‚»
 							//State3 = €‚ÊŠÔÛ
