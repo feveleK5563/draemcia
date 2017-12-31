@@ -106,12 +106,12 @@ namespace  Slime
 		if (state == State3)
 		{
 			src = *charaChip[stateAnim];
-			if (animCnt > 3)
+			if (animCnt > 5)
 				color = { 1.f, 1.f, 0.1f, 0.1f };
 		}
 		else
 		{
-			src = *charaChip[animCnt / 10 % 2 + stateAnim];
+			src = *charaChip[animCnt / 8 % 2 + stateAnim];
 		}
 
 		if (angleLR == Left) //”½“]
@@ -203,8 +203,8 @@ namespace  Slime
 
 		if (DamageEnemy())
 			stateAnim += 4;
-		else
-			DamagePlayer();
+
+		DamagePlayer();
 	}
 
 	//-------------------------------------------------------------------

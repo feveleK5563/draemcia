@@ -52,11 +52,14 @@ namespace  Player
 
 		float			basisSpeed;		//プレイヤーの基本スピード
 		const int		LifeMax = 10;	//体力最大値
-		unsigned int	life;			//プレイヤーの体力
+		int				life;			//プレイヤーの体力
 		unsigned int	swordLength;	//剣の長さ
 		ML::Box2D		swordHitBase;	//剣の当たり判定
+		int srcNum;						//アニメーション番号
+		bool			hitDamage;		//被ダメージ中
 
-		void TurnaroundDraw(const ML::Box2D&, const ML::Box2D&, int i);
+		void TurnaroundDraw(const ML::Box2D&, const ML::Box2D&, int i, const ML::Color&);
 		void ChangeSpeed();
+		void DamageAnim();
 	};
 }

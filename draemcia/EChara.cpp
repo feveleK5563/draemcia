@@ -14,7 +14,7 @@ bool EChara::DamageEnemy()
 
 	//プレイヤーにアクセス
 	auto player = ge->GetTask_One_GN<Player::Object>("プレイヤー", "NoName");
-	if (player == nullptr)
+	if (player == nullptr || player->state == State3)
 		return false;
 
 	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
@@ -38,14 +38,22 @@ bool EChara::DamagePlayer()
 
 	//プレイヤーにアクセス
 	auto player = ge->GetTask_One_GN<Player::Object>("プレイヤー", "NoName");
-	if (player == nullptr)
+	if (player == nullptr || player->state == State3 || player->hitDamage)
 		return false;
 
 	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->hitBase.OffsetCopy(player->pos)))
 	{
 		if (--player->life <= 0)
+		{
 			player->state = State3;
+		}
+		else
+		{
+			player->hitDamage = true;
+			player->cntTime = 0;
+		}
+
 		return true;
 	}
 	return false;

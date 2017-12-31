@@ -48,13 +48,16 @@ namespace  Player
 						//State2… 下攻撃状態
 						//State3… 死亡
 
+		hitDamage = false;
+
 		forceOfJump = -9.5f;
 
 		hitBase = { -16, -16, 32, 32 };
 		swordHitBase = { 16, -16, (int)swordLength + 9, 20 };
 
+		srcNum = 0;
 		//キャラチップ読み込み
-		for (int y = 0; y < 2; ++y)
+		for (int y = 0; y < 4; ++y)
 		{
 			for (int x = 0; x < 6; ++x)
 			{
@@ -93,15 +96,22 @@ namespace  Player
 	{
 		in = DI::GPad_GetState("P1");
 
-		//ボタン入力による移動速度変更
-		ChangeSpeed();
+		if (state != Non && state != State3)
+		{
+			//ボタン入力による移動速度変更
+			ChangeSpeed();
 
-		//画面外判定
-		OutCheckMove();
+			//画面外判定
+			OutCheckMove();
+		}
+
 		//足元接触判定
 		CheckFootMove();
 
 		//アニメーション
+		if (hitDamage)
+			DamageAnim();
+
 		++animCnt;
 	}
 	//-------------------------------------------------------------------
@@ -110,23 +120,23 @@ namespace  Player
 	{
 		//キャラクタ描画 (「プレイヤー」「剣身」「剣先」の三回)
 		ML::Box2D draw;
-		int srcNum;
+		ML::Color color = { 1.f, 1.f, 1.f, 1.f };
 		int *changeDXY = &draw.x,
 			*changeDWH = &draw.w;
 
 		switch (state)
 		{
-		case BChara::State1:
-			srcNum = (animCnt / 10 % 2) * 3;
+		case State1: //着地面
+			srcNum = (animCnt / 8 % 2) * 3;
 			break;
 
-		case BChara::State2:
+		case State2: //ジャンプ中
 			srcNum = 6;
 			changeDXY = &draw.y;
 			changeDWH = &draw.h;
 			break;
 
-		case BChara::State3:
+		case State3: //墓
 			srcNum = 9;
 			break;
 
@@ -136,17 +146,26 @@ namespace  Player
 			return;
 		}
 
-		//プレイヤー
+		if (hitDamage) //被ダメ中
+		{
+			srcNum += 12;
+			if (cntTime > 5)
+			{
+				color = { 1.f, 1.f, 0.1f, 0.1f };
+			}
+		}
+
+		//プレイヤーの表示
 		{
 			draw = { -16, -16, 32, 32 };
-			TurnaroundDraw(draw, *charaChip[srcNum], 0);
+			TurnaroundDraw(draw, *charaChip[srcNum], 0, color);
 		}
 
 		//墓状態は以下の処理不要
 		if (state == State3)
 			return;
 
-		//剣身
+		//剣身の表示
 		int plusSL = swordLength;
 		*changeDXY += 32;
 		ML::Box2D src;
@@ -170,14 +189,14 @@ namespace  Player
 				*changeSWH = plusSL;
 				plusSL = 0;
 			}
-			TurnaroundDraw(draw, src, 1);
+			TurnaroundDraw(draw, src, 1, color);
 			*changeDXY += *changeDWH;
 		}
 
-		//剣先
+		//剣先の表示
 		{
 			*changeDWH = 32;
-			TurnaroundDraw(draw, *charaChip[srcNum + 2], 2);
+			TurnaroundDraw(draw, *charaChip[srcNum + 2], 2, color);
 		}
 
 		//当たり判定可視化計画
@@ -187,7 +206,7 @@ namespace  Player
 
 	//-------------------------------------------------------------------
 	//方向転換描画
-	void Object::TurnaroundDraw(const ML::Box2D& draw, const ML::Box2D& src, int i)
+	void Object::TurnaroundDraw(const ML::Box2D& draw, const ML::Box2D& src, int i, const ML::Color& color)
 	{
 		ML::Box2D cpydr = draw;
 		ML::Box2D cpysr = src;
@@ -195,7 +214,7 @@ namespace  Player
 		{
 			cpysr.x += src.w;
 			cpysr.w *= -1;
-			if (state == State1)
+			if (state == State1 || state == State3)
 			{
 				switch (i)
 				{
@@ -211,7 +230,7 @@ namespace  Player
 		}
 
 		cpydr.Offset(pos);
-		DG::Image_Draw(res->imageName, cpydr, cpysr);
+		DG::Image_Draw(res->imageName, cpydr, cpysr, color);
 	}
 
 	//-------------------------------------------------------------------
@@ -292,6 +311,21 @@ namespace  Player
 			{
 				state = State1;
 			}
+		}
+	}
+
+	//-------------------------------------------------------------------
+	//被ダメージ中のアニメーション
+	void Object::DamageAnim()
+	{
+		if (cntTime > 10)
+		{
+			hitDamage = false;
+			cntTime = 0;
+		}
+		else
+		{
+			++cntTime;
 		}
 	}
 
