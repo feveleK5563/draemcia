@@ -32,6 +32,8 @@ namespace  Slime
 		this->res = Resource::Create();
 
 		//šƒf[ƒ^‰Šú‰»
+		imageName = res->imageName;
+
 		render2D_Priority[1] = 0.5f;
 		state = State1;		//State1 = ‰æ–Ê‰º‚©‚ç”‡‚¢ã‚ª‚é“®‚«
 							//State2 = —¤ã‚ð‚Ì‚»‚Ì‚»
@@ -97,33 +99,7 @@ namespace  Slime
 	//u‚Q‚c•`‰æv‚PƒtƒŒ[ƒ€–ˆ‚És‚¤ˆ—
 	void  Object::Render2D_AF()
 	{
-		if (state == Non)
-			return;
-
-		ML::Box2D src;
-		ML::Color color = { 1.f, 1.f, 1.f, 1.f };
-
-		if (state == State3)
-		{
-			src = *charaChip[stateAnim];
-			if (animCnt > 5)
-				color = { 1.f, 1.f, 0.1f, 0.1f };
-		}
-		else
-		{
-			src = *charaChip[animCnt / 8 % 2 + stateAnim];
-		}
-
-		if (angleLR == Left) //”½“]
-		{
-			src.x += src.w;
-			src.w *= -1;
-		}
-
-		ML::Box2D draw = { -16, -16, 32, 32 };
-		draw.Offset(pos);
-		DG::Image_Draw(res->imageName, draw, src, color);
-		RenderFrameRed(hitBase);
+		EnemyRender();
 	}
 
 	//-------------------------------------------------------------------

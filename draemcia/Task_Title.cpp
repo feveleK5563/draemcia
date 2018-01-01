@@ -12,15 +12,18 @@ namespace  Title
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		this->imageName = "TitleLogoImg";
-		DG::Image_Create(this->imageName, "./data/image/Title.bmp");
+		backImage = "TitleBackImg";
+		DG::Image_Create(backImage, "./data/image/TitleFusuma.png");
+		logoImage = "TitleLogoImg";
+		DG::Image_Create(logoImage, "./data/image/TitleLogo.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
 	//リソースの解放
 	bool  Resource::Finalize()
 	{
-		DG::Image_Erase(this->imageName);
+		DG::Image_Erase(backImage);
+		DG::Image_Erase(logoImage);
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -33,7 +36,9 @@ namespace  Title
 		this->res = Resource::Create();
 
 		//★データ初期化
-		this->logoPosY = -270;
+		fusumaPosX[0] = -300;
+		fusumaPosX[1] = 600;
+		setOK = false;
 
 		//★タスクの生成
 
@@ -59,27 +64,46 @@ namespace  Title
 	{
 		auto in = DI::GPad_GetState("P1");
 
-		this->logoPosY += 9;
-		if (this->logoPosY >= 0) {
-			this->logoPosY = 0;
-		}
-
-		if (this->logoPosY == 0) {
+		if (setOK)
+		{
 			if (in.ST.down) {
 				//自身に消滅要請
 				this->Kill();
 			}
 		}
+		else
+		{
+			fusumaPosX[0] += 7;
+			fusumaPosX[1] -= 7;
+
+			if (fusumaPosX[0] >= 0 && fusumaPosX[1] <= 300)
+			{
+				fusumaPosX[0] = 0;
+				fusumaPosX[1] = 300;
+				setOK = true;
+			}
+		}
+
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
-		ML::Box2D  draw(0, 0, 480, 270);
-		ML::Box2D  src(0, 0, 240, 135);
+		for (int i = 0; i < 2; ++i)
+		{
+			ML::Box2D	draw(0, 0, 300, 270);
+			ML::Box2D	src(300 * i, 0, 300, 270);
+			draw.Offset(fusumaPosX[i], 0);
+			DG::Image_Draw(res->backImage, draw, src);
+		}
 
-		draw.Offset(0, this->logoPosY);
-		DG::Image_Draw(this->res->imageName, draw, src);
+		if (setOK)
+		{
+			ML::Box2D	draw(-180, 0, 360, 80);
+			ML::Box2D	src(0, 0, 360, 80);
+			draw.Offset(300, 10);
+			DG::Image_Draw(res->logoImage, draw, src);
+		}
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

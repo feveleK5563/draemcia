@@ -24,7 +24,7 @@ namespace  Slime
 		static  Resource::SP  Create();
 	//•ÏX‰Â
 		//‹¤—L‚·‚é•Ï”‚Í‚±‚±‚É’Ç‰Á‚·‚é
-		string		imageName;
+		string imageName;
 	};
 	//-------------------------------------------------------------------
 	class  Object : public  EChara

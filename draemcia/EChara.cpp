@@ -61,6 +61,39 @@ bool EChara::DamagePlayer()
 }
 
 //-------------------------------------------------------------------
+//モンスターの表示
+void EChara::EnemyRender()
+{
+	if (state == Non)
+		return;
+
+	ML::Box2D src;
+	ML::Color color = { 1.f, 1.f, 1.f, 1.f };
+
+	if (state == State3)
+	{
+		src = *charaChip[stateAnim];
+		if (animCnt > 5)
+			color = { 1.f, 1.f, 0.1f, 0.1f };
+	}
+	else
+	{
+		src = *charaChip[animCnt / 8 % 2 + stateAnim];
+	}
+
+	if (angleLR == Left) //反転
+	{
+		src.x += src.w;
+		src.w *= -1;
+	}
+
+	ML::Box2D draw = { -16, -16, 32, 32 };
+	draw.Offset(pos);
+	DG::Image_Draw(imageName, draw, src, color);
+	RenderFrameRed(hitBase);
+}
+
+//-------------------------------------------------------------------
 //自分を殺していくスタイル
 void EChara::KillMeBaby()
 {

@@ -13,10 +13,13 @@ private:
 	typedef weak_ptr<EChara>		WP;
 public:
 	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+	string imageName;
+
 	int stateAnim;		//状態に応じたアニメーション番号
 	int moveType;		//動作の管理番号
 
 	EChara() : 
+		imageName(""),
 		stateAnim(0),
 		moveType(0){}
 
@@ -24,5 +27,6 @@ public:
 
 	virtual bool DamagePlayer();
 	virtual bool DamageEnemy();
+	virtual void EnemyRender();
 	virtual void KillMeBaby();
 };
