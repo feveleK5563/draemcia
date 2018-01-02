@@ -55,8 +55,9 @@ namespace  Player
 		int				life;			//プレイヤーの体力
 		unsigned int	swordLength;	//剣の長さ
 		ML::Box2D		swordHitBase;	//剣の当たり判定
-		int srcNum;						//アニメーション番号
+		int				srcNum;			//アニメーション番号
 		bool			hitDamage;		//被ダメージ中
+		bool			start;			//ゲーム開始
 
 		void TurnaroundDraw(const ML::Box2D&, const ML::Box2D&, int i, const ML::Color&);
 		void ChangeSpeed();

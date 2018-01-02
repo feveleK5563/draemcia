@@ -36,8 +36,8 @@ namespace  Player
 		controllerName = "P1";
 		render2D_Priority[1] = 0.6f;
 
-		pos = { float(ge->screen2DWidth / 2),
-				float(ge->screen2DHeight / 2) };
+		pos = { float(ge->screen2DWidth) + 60,
+				float(ge->screen2DHeight) - 70};
 		basisSpeed = 2.f;
 		life = LifeMax;
 		swordLength = 16;
@@ -49,10 +49,11 @@ namespace  Player
 						//State3… 死亡
 
 		hitDamage = false;
+		start = false;
 
 		forceOfJump = -9.5f;
 
-		hitBase = { -16, -16, 32, 32 };
+		hitBase = { -12, -13, 24, 29 };
 		swordHitBase = { 16, -16, (int)swordLength + 9, 20 };
 
 		srcNum = 0;
@@ -96,16 +97,37 @@ namespace  Player
 	{
 		in = DI::GPad_GetState("P1");
 
-		if (state != Non && state != State3)
+		if (start)
 		{
-			//ボタン入力による移動速度変更
-			ChangeSpeed();
+			if (state != Non && state != State3)
+			{
+				//ボタン入力による移動速度変更
+				ChangeSpeed();
 
-			//画面外判定
-			OutCheckMove();
+				//画面外判定とX軸移動
+				OutCheckMove();
+			}
+			else if (state == State3)
+			{
+				FallAndJump(false);
+			}
+		}
+		else
+		{
+			if (pos.x < 600 - 16)
+			{
+				start = true;
+			}
+			else
+			{
+				speed.x = -basisSpeed;
+				FallAndJump(false);
+
+				NomalMove();
+			}
 		}
 
-		//足元接触判定
+		//足元接触判定とY軸移動
 		CheckFootMove();
 
 		//アニメーション

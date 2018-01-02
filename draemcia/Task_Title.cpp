@@ -36,8 +36,8 @@ namespace  Title
 		this->res = Resource::Create();
 
 		//★データ初期化
-		fusumaPosX[0] = -300;
-		fusumaPosX[1] = 600;
+		fusumaPosX[0] = -500;
+		fusumaPosX[1] = 800;
 		setOK = false;
 
 		//★タスクの生成
@@ -73,8 +73,8 @@ namespace  Title
 		}
 		else
 		{
-			fusumaPosX[0] += 7;
-			fusumaPosX[1] -= 7;
+			fusumaPosX[0] += 8;
+			fusumaPosX[1] -= 8;
 
 			if (fusumaPosX[0] >= 0 && fusumaPosX[1] <= 300)
 			{

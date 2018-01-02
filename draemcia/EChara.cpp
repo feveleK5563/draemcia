@@ -44,9 +44,10 @@ bool EChara::DamagePlayer()
 	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->hitBase.OffsetCopy(player->pos)))
 	{
-		if (--player->life <= 0)
+		if (--player->life == 0)
 		{
 			player->state = State3;
+			player->pos.y -= 10;
 			player->render2D_Priority[1] = 0.4f;
 		}
 		else

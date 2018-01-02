@@ -41,7 +41,7 @@ namespace  Slime
 
 		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 32,
 				float(ge->screen2DHeight) + 16 };
-		hitBase = { -16, -16, 32, 32 };
+		hitBase = { -15, -14, 30, 30 };
 		
 		//キャラチップ読み込み
 		for (int y = 0; y < 4; ++y)

@@ -50,7 +50,7 @@ public:
 
 	//ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
 	BChara():
-		RendFrameFlag(false),	//“–‚½‚è”»’è‚Ì•\¦‰Â”Û
+		RendFrameFlag(true),	//“–‚½‚è”»’è‚Ì•\¦‰Â”Û
 		state(Non),
 		pos(0.f, 0.f),
 		speed(0.f, 0.f),
