@@ -47,8 +47,6 @@ namespace  Game
 		auto  fd = Field::Object::Create(true);
 		//プレイヤタスク
 		auto  pl = Player::Object::Create(true);
-		//ドラモス(仮)
-		auto  dm = Dramos::Object::Create(true);
 
 		return  true;
 	}
@@ -75,11 +73,27 @@ namespace  Game
 	{
 		auto in = DI::GPad_GetState("P1");
 
-		if ((monsterAmount < MonsterMaxAmount) &&
-			!(appMonsterTime++ % 30))
+		if (!(appMonsterTime++ % 30))
 		{
-			auto sm = Slime::Object::Create(true);
-			++monsterAmount;
+			if (monsterAmount < MonsterMaxAmount)
+			{
+				switch (rand() % 2)
+				{
+				case 0:
+				{
+					auto sm = Slime::Object::Create(true);
+					++monsterAmount;
+				}
+					break;
+
+				case 1:
+				{
+					auto dm = Dramos::Object::Create(true);
+					++monsterAmount;
+				}
+					break;
+				}
+			}
 		}
 
 		if (in.ST.down) {

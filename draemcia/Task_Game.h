@@ -46,8 +46,10 @@ namespace  Game
 	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 	public:
 		//追加したい変数・メソッドはここに追加する
+
 		const int MonsterMaxAmount = 15;	//モンスターの最大量
 		int monsterAmount;					//現在のモンスターの量
+
 		int appMonsterTime;					//モンスターの出現タイミング調整
 	};
 }

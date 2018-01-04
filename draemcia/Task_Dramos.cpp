@@ -38,7 +38,7 @@ namespace Dramos
 							//State2 = ふわふわ飛ぶ
 							//State3 = 死ぬ間際
 
-		pos = { 100, -32 };
+		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 32, -32 };
 		hitBase = { -15, -15, 30, 30 };
 
 		//キャラチップ読み込み
@@ -121,6 +121,7 @@ namespace Dramos
 			speed.y = float(sin(ML::ToRadian(moveY))) * 2.f;
 		}
 		NomalMove();
+		++animCnt;
 	}
 
 	//-------------------------------------------------------------------
@@ -190,6 +191,7 @@ namespace Dramos
 			stateAnim += 2;
 
 		DamagePlayer();
+		++animCnt;
 	}
 
 	//-------------------------------------------------------------------
