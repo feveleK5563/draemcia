@@ -79,15 +79,15 @@ namespace  Slime
 	{
 		switch (state)
 		{
-		case BChara::State1:
+		case BChara::State1: //‰æ–Ê‰º‚©‚ç”‡‚¢ã‚ª‚é“®‚«
 			Move1();
 			break;
 
-		case BChara::State2:
+		case BChara::State2: //—¤ã‚ğ‚Ì‚»‚Ì‚»
 			Move2();
 			break;
 
-		case BChara::State3:
+		case BChara::State3: //€‚ÊŠÔÛ
 			Move3();
 			break;
 
@@ -170,6 +170,9 @@ namespace  Slime
 				moveType = 0;
 			}
 			break;
+
+		default:
+			return;
 		}
 		++animCnt;
 

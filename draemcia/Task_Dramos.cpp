@@ -1,29 +1,25 @@
 //-------------------------------------------------------------------
-//ゲーム本編
+//
 //-------------------------------------------------------------------
 #include  "MyPG.h"
-#include  "Task_Title.h"
-#include  "Task_Game.h"
-#include  "Task_GameBG.h"
-#include  "Task_Field.h"
-#include  "Task_Player.h"
-
-#include  "Task_Slime.h"
 #include  "Task_Dramos.h"
 
-namespace  Game
+namespace Dramos
 {
 	Resource::WP  Resource::instance;
 	//-------------------------------------------------------------------
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
+		imageName = "Dramos";
+		DG::Image_Create(imageName, "./data/image/Dramos.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
 	//リソースの解放
 	bool  Resource::Finalize()
 	{
+		DG::Image_Erase(imageName);
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -36,19 +32,28 @@ namespace  Game
 		this->res = Resource::Create();
 
 		//★データ初期化
-		srand((unsigned)time(NULL));
-		monsterAmount = 0;
-		appMonsterTime = 0;
-		
+		imageName = res->imageName;
+		render2D_Priority[1] = 0.5f;
+		state = State1;		//State1 = 画面上から降下
+							//State2 = ふわふわ飛ぶ
+							//State3 = 死ぬ間際
+
+		pos = { 100, -32 };
+		hitBase = { -15, -15, 30, 30 };
+
+		//キャラチップ読み込み
+		for (int y = 0; y < 2; ++y)
+		{
+			for (int x = 0; x < 2; ++x)
+			{
+				charaChip.emplace_back(new ML::Box2D(x * 32, y * 32, 32, 32));
+			}
+		}
+
+		moveX = 0;
+		moveY = 0;
+
 		//★タスクの生成
-		//背景タスク
-		auto  bg = GameBG::Object::Create(true);
-		//フィールドタスク
-		auto  fd = Field::Object::Create(true);
-		//プレイヤタスク
-		auto  pl = Player::Object::Create(true);
-		//ドラモス(仮)
-		auto  dm = Dramos::Object::Create(true);
 
 		return  true;
 	}
@@ -57,14 +62,15 @@ namespace  Game
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-		ge->KillAll_G("本編");
-		ge->KillAll_G("フィールド");
-		ge->KillAll_G("プレイヤー");
-		ge->KillAll_G("敵");
+		int size = charaChip.size();
+		for (int i = 0; i < size; ++i)
+			delete charaChip[i];
+		charaChip.clear();
+		charaChip.shrink_to_fit();
+
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
-			auto nextTask = Title::Object::Create(true);
 		}
 
 		return  true;
@@ -73,24 +79,132 @@ namespace  Game
 	//「更新」１フレーム毎に行う処理
 	void  Object::UpDate()
 	{
-		auto in = DI::GPad_GetState("P1");
-
-		if ((monsterAmount < MonsterMaxAmount) &&
-			!(appMonsterTime++ % 30))
+		switch (state)
 		{
-			auto sm = Slime::Object::Create(true);
-			++monsterAmount;
-		}
+		case BChara::State1: //画面上から降下
+			Move1();
+			break;
 
-		if (in.ST.down) {
-			//自身に消滅要請
-			Kill();
+		case BChara::State2: //ふわふわ飛ぶ
+			Move2();
+			break;
+
+		case BChara::State3: //死ぬ間際
+			Move3();
+			break;
+
+		default:
+			return;
 		}
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
+		EnemyRender();
+	}
+
+	//-------------------------------------------------------------------
+	//State1時の動作
+	void Object::Move1()
+	{
+		if (moveY > 180)
+		{
+			moveY = 0;
+			state = State2;
+			speed.y = 0;
+			moveType = 0;
+		}
+		else
+		{
+			moveY += 2;
+			speed.y = float(sin(ML::ToRadian(moveY))) * 2.f;
+		}
+		NomalMove();
+	}
+
+	//-------------------------------------------------------------------
+	//State2の動作
+	void Object::Move2()
+	{
+		switch (moveType)
+		{
+		case 0:		//待機
+			if (cntTime == 180)
+			{
+				if (rand() % 2)
+				{
+					moveType = 1;
+					if (rand() % 2)
+					{
+						angleLR = Left;
+						speed.x = -1.f;
+					}
+					else
+					{
+						angleLR = Right;
+						speed.x = 1.f;
+					}
+				}
+				else if (rand() % 2)
+				{
+					moveType = 2;
+				}
+			}
+
+		case 1:		//左右移動
+			if (cntTime == 90)
+			{
+				speed.x = 0;
+				moveType = 0;
+			}
+			break;
+			
+		case 2:		//垂直落下
+			if (cntTime == 180)
+			{
+				moveType = rand() % 2;
+			}
+			break;
+
+		default:
+			return;
+		}
+		
+		moveY += 2;
+		if (moveType == 2)
+			speed.y = float(sin(ML::ToRadian(moveY))) * 2.3f;
+		else
+			speed.y = float(sin(ML::ToRadian(moveY))) / 1.5f;
+
+
+		if (cntTime > 180)
+			cntTime = 0;
+		else
+			++cntTime;
+
+		pos.y += speed.y;
+		OutCheckMove();
+
+		if (DamageEnemy())
+			stateAnim += 2;
+
+		DamagePlayer();
+	}
+
+	//-------------------------------------------------------------------
+	//State3時の動作
+	void Object::Move3()
+	{
+		if (animCnt > 10)
+		{
+			state = Non;
+			KillMeBaby();
+		}
+		else
+		{
+			++animCnt;
+		}
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

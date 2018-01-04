@@ -36,8 +36,8 @@ namespace  Title
 		this->res = Resource::Create();
 
 		//★データ初期化
-		fusumaPosX[0] = -500;
-		fusumaPosX[1] = 800;
+		fusumaPosX[0] = -300;
+		fusumaPosX[1] = 600;
 		setOK = false;
 
 		//★タスクの生成
