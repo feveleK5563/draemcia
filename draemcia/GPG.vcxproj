@@ -105,6 +105,7 @@
     <ClCompile Include="Task_Field.cpp" />
     <ClCompile Include="Task_Player.cpp" />
     <ClCompile Include="Task_Slime.cpp" />
+    <ClCompile Include="Task_Snake.cpp" />
     <ClCompile Include="Task_Title.cpp" />
     <ClCompile Include="WinMain.cpp" />
     <ClCompile Include="xnacollision.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="Task_Field.h" />
     <ClInclude Include="Task_Player.h" />
     <ClInclude Include="Task_Slime.h" />
+    <ClInclude Include="Task_Snake.h" />
     <ClInclude Include="Task_Title.h" />
     <ClInclude Include="xnacollision.h" />
   </ItemGroup>

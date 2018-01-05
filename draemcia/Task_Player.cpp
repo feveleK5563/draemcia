@@ -34,13 +34,13 @@ namespace  Player
 
 		//šƒf[ƒ^‰Šú‰»
 		controllerName = "P1";
-		render2D_Priority[1] = 0.6f;
+		render2D_Priority[1] = 0.7f;
 
 		pos = { float(ge->screen2DWidth) + 60,
 				float(ge->screen2DHeight) - 70};
 		basisSpeed = 2.f;
 		life = LifeMax;
-		swordLength = 16;
+		swordLength = 30;
 		speed.x = -basisSpeed;
 		angleLR = Left;
 

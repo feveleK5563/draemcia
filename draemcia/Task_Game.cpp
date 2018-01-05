@@ -10,6 +10,7 @@
 
 #include  "Task_Slime.h"
 #include  "Task_Dramos.h"
+#include  "Task_Snake.h"
 
 namespace  Game
 {
@@ -73,26 +74,31 @@ namespace  Game
 	{
 		auto in = DI::GPad_GetState("P1");
 
-		if (!(appMonsterTime++ % 30))
+		if (!(appMonsterTime++ % 20))
 		{
 			if (monsterAmount < MonsterMaxAmount)
 			{
-				switch (rand() % 2)
+				switch (rand() % 3)
 				{
 				case 0:
 				{
 					auto sm = Slime::Object::Create(true);
-					++monsterAmount;
 				}
 					break;
 
 				case 1:
 				{
 					auto dm = Dramos::Object::Create(true);
-					++monsterAmount;
+				}
+					break;
+
+				case 2:
+				{
+					auto sk = Snake::Object::Create(true);
 				}
 					break;
 				}
+				++monsterAmount;
 			}
 		}
 

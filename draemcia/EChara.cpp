@@ -44,7 +44,8 @@ bool EChara::DamagePlayer()
 	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->hitBase.OffsetCopy(player->pos)))
 	{
-		if (--player->life == 0)
+		player->swordLength -= 10;
+		if (player->swordLength < 0)
 		{
 			player->state = State3;
 			player->pos.y -= 10;
@@ -63,7 +64,7 @@ bool EChara::DamagePlayer()
 
 //-------------------------------------------------------------------
 //モンスターの表示
-void EChara::EnemyRender()
+void EChara::EnemyRender(int width)
 {
 	if (state == Non)
 		return;
@@ -79,7 +80,7 @@ void EChara::EnemyRender()
 	}
 	else
 	{
-		src = *charaChip[animCnt / 8 % 2 + stateAnim];
+		src = *charaChip[animCnt / 8 % width + stateAnim];
 	}
 
 	if (angleLR == Left) //反転
@@ -101,8 +102,8 @@ void EChara::KillMeBaby()
 	if (auto gm = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
 		--gm->monsterAmount;
 
-	/*if (auto player = ge->GetTask_One_GN<Player::Object>("プレイヤー", "NoName"))
-		++player->swordLength;*/
+	if (auto player = ge->GetTask_One_GN<Player::Object>("プレイヤー", "NoName"))
+		++player->swordLength;
 
 	Kill();
 }

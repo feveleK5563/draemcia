@@ -38,7 +38,8 @@ namespace Dramos
 							//State2 = ふわふわ飛ぶ
 							//State3 = 死ぬ間際
 
-		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 32, -32 };
+		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
+				-32 };
 		hitBase = { -15, -15, 30, 30 };
 
 		//キャラチップ読み込み
@@ -113,15 +114,18 @@ namespace Dramos
 			moveY = 0;
 			state = State2;
 			speed.y = 0;
-			moveType = 0;
+			moveType = (rand() % 2) * 2;
 		}
 		else
 		{
 			moveY += 2;
-			speed.y = float(sin(ML::ToRadian(moveY))) * 2.f;
+			speed.y = float(sin(ML::ToRadian(moveY))) * 2.5f;
 		}
 		NomalMove();
 		++animCnt;
+
+		if (DamageEnemy())
+			stateAnim += 2;
 	}
 
 	//-------------------------------------------------------------------
@@ -131,7 +135,7 @@ namespace Dramos
 		switch (moveType)
 		{
 		case 0:		//待機
-			if (cntTime == 180)
+			if (cntTime == 120)
 			{
 				if (rand() % 2)
 				{
@@ -139,15 +143,15 @@ namespace Dramos
 					if (rand() % 2)
 					{
 						angleLR = Left;
-						speed.x = -1.f;
+						speed.x = -1.5f;
 					}
 					else
 					{
 						angleLR = Right;
-						speed.x = 1.f;
+						speed.x = 1.5f;
 					}
 				}
-				else if (rand() % 2)
+				else
 				{
 					moveType = 2;
 				}
@@ -162,7 +166,7 @@ namespace Dramos
 			break;
 			
 		case 2:		//垂直落下
-			if (cntTime == 180)
+			if (cntTime == 120)
 			{
 				moveType = rand() % 2;
 			}
@@ -172,14 +176,14 @@ namespace Dramos
 			return;
 		}
 		
-		moveY += 2;
+		moveY += 3;
 		if (moveType == 2)
-			speed.y = float(sin(ML::ToRadian(moveY))) * 2.3f;
+			speed.y = float(sin(ML::ToRadian(moveY))) * 2.4f;
 		else
 			speed.y = float(sin(ML::ToRadian(moveY))) / 1.5f;
 
 
-		if (cntTime > 180)
+		if (cntTime == 120)
 			cntTime = 0;
 		else
 			++cntTime;
