@@ -36,11 +36,11 @@ namespace  Player
 		controllerName = "P1";
 		render2D_Priority[1] = 0.7f;
 
-		pos = { float(ge->screen2DWidth) + 60,
-				float(ge->screen2DHeight) - 70};
+		pos = { float(ge->screen2DWidth) + 80,
+				float(ge->screen2DHeight) - 60};
 		basisSpeed = 2.f;
 		life = LifeMax;
-		swordLength = 30;
+		swordLength = 16;
 		speed.x = -basisSpeed;
 		angleLR = Left;
 

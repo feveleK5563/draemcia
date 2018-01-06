@@ -42,6 +42,7 @@ namespace  Snake
 
 		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
 				float(ge->screen2DHeight) - 51 };
+		angleLR = rand() % 2 ? Left : Right;
 		hitBase = { -15, -15, 30, 30 };
 		
 		//キャラチップ読み込み
@@ -154,7 +155,7 @@ namespace  Snake
 			break;
 
 		case 1:		//めっちゃ走る
-			if (cntTime > 60)
+			if (cntTime > 90)
 			{
 				moveType = 2;
 				cntTime = 0;

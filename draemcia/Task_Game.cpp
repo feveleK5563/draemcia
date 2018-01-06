@@ -7,6 +7,7 @@
 #include  "Task_GameBG.h"
 #include  "Task_Field.h"
 #include  "Task_Player.h"
+#include  "Task_UI.h"
 
 #include  "Task_Slime.h"
 #include  "Task_Dramos.h"
@@ -48,6 +49,8 @@ namespace  Game
 		auto  fd = Field::Object::Create(true);
 		//プレイヤタスク
 		auto  pl = Player::Object::Create(true);
+		//UIタスク
+		auto  ui = UI::Object::Create(true);
 
 		return  true;
 	}
@@ -74,7 +77,7 @@ namespace  Game
 	{
 		auto in = DI::GPad_GetState("P1");
 
-		if (!(appMonsterTime++ % 20))
+		if (!(appMonsterTime++ % 10))
 		{
 			if (monsterAmount < MonsterMaxAmount)
 			{

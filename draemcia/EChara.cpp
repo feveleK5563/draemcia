@@ -22,6 +22,7 @@ bool EChara::DamageEnemy()
 	{
 		state = State3;
 		animCnt = 0;
+		++player->swordLength;
 		return true;
 	}
 	return false;
@@ -47,6 +48,7 @@ bool EChara::DamagePlayer()
 		player->swordLength -= 10;
 		if (player->swordLength < 0)
 		{
+			player->swordLength = 0;
 			player->state = State3;
 			player->pos.y -= 10;
 			player->render2D_Priority[1] = 0.4f;
@@ -101,9 +103,6 @@ void EChara::KillMeBaby()
 {
 	if (auto gm = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
 		--gm->monsterAmount;
-
-	if (auto player = ge->GetTask_One_GN<Player::Object>("プレイヤー", "NoName"))
-		++player->swordLength;
 
 	Kill();
 }

@@ -2,17 +2,18 @@
 //
 //-------------------------------------------------------------------
 #include  "MyPG.h"
-#include  "Task_Dramos.h"
+#include  "Task_Player.h"
+#include  "Task_UI.h"
 
-namespace Dramos
+namespace  UI
 {
 	Resource::WP  Resource::instance;
 	//-------------------------------------------------------------------
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		imageName = "Dramos";
-		DG::Image_Create(imageName, "./data/image/Dramos.png");
+		imageName = "Length";
+		DG::Image_Create(imageName, "./data/image/Length.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -32,28 +33,38 @@ namespace Dramos
 		this->res = Resource::Create();
 
 		//★データ初期化
-		imageName = res->imageName;
-		render2D_Priority[1] = 0.5f;
-		state = State1;		//State1 = 画面上から降下
-							//State2 = ふわふわ飛ぶ
-							//State3 = 死ぬ間際
+		render2D_Priority[1] = 0.2f;
 
-		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
-				-32 };
-		angleLR = rand() % 2 ? Left : Right;
-		hitBase = { -15, -15, 30, 30 };
+		pos = { 10, 7 };
+		showSL = 0;
+		if (auto player = ge->GetTask_One_GN<Player::Object>("プレイヤー", "NoName"))
+			swordLength = &(player->swordLength);
 
-		//キャラチップ読み込み
-		for (int y = 0; y < 2; ++y)
+		meterRevision = 0;
+		for (int i = 0; i < 2; ++i)
 		{
-			for (int x = 0; x < 2; ++x)
-			{
-				charaChip.emplace_back(new ML::Box2D(x * 32, y * 32, 32, 32));
-			}
+			integer[i] = 0;
+			decimal[i] = 0;
 		}
 
-		moveX = 0;
-		moveY = 0;
+		//小0~9,大0~9
+		int height = 0;
+		for (int y = 0; y < 4; ++y)
+		{
+			for (int x = 0; x < 5; ++x)
+			{
+				if (y < 2)
+					numberChip.emplace_back(new ML::Box2D(18 * x, height, 18, 22));
+				else
+					numberChip.emplace_back(new ML::Box2D(24 * x, height, 24, 32));
+			}
+			if (y < 2)
+				height += 22;
+			else
+				height += 32;
+		}
+		numberChip.emplace_back(new ML::Box2D(120, 44,  10, 32)); //.
+		numberChip.emplace_back(new ML::Box2D(120, 76, 40, 32)); //m
 
 		//★タスクの生成
 
@@ -64,12 +75,11 @@ namespace Dramos
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-		int size = charaChip.size();
+		int size = numberChip.size();
 		for (int i = 0; i < size; ++i)
-			delete charaChip[i];
-		charaChip.clear();
-		charaChip.shrink_to_fit();
-
+			delete numberChip[i];
+		numberChip.clear();
+		numberChip.shrink_to_fit();
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
@@ -81,137 +91,49 @@ namespace Dramos
 	//「更新」１フレーム毎に行う処理
 	void  Object::UpDate()
 	{
-		switch (state)
-		{
-		case BChara::State1: //画面上から降下
-			Move1();
-			break;
+		meterRevision	= float(*swordLength) / 32.f;
 
-		case BChara::State2: //ふわふわ飛ぶ
-			Move2();
-			break;
+		int in = (int)meterRevision;
+		int de = int(meterRevision * 100.f) % 100;
 
-		case BChara::State3: //死ぬ間際
-			Move3();
-			break;
-
-		default:
-			return;
-		}
+		integer[0] = in / 10;
+		integer[1] = in % 10;
+		decimal[0] = de / 10;
+		decimal[1] = de % 10;
 	}
 	//-------------------------------------------------------------------
 	//「２Ｄ描画」１フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
-		EnemyRender();
-	}
-
-	//-------------------------------------------------------------------
-	//State1時の動作
-	void Object::Move1()
-	{
-		if (moveY > 180)
-		{
-			moveY = 0;
-			state = State2;
-			speed.y = 0;
-			moveType = (rand() % 2) * 2;
+		int sideLength = 0;
+		for (int i = 0; i < 2; ++i)
+		{	//整数
+			ML::Box2D draw = *numberChip[numberBig];
+			draw.x = 0; draw.y = 0;
+			draw.Offset(pos.x + sideLength, pos.y);
+			DG::Image_Draw(res->imageName, draw, *numberChip[numberBig + integer[i]]);
+			sideLength += draw.w;
 		}
-		else
-		{
-			moveY += 2;
-			speed.y = float(sin(ML::ToRadian(moveY))) * 2.5f;
+		{	//ドット
+			ML::Box2D draw = *numberChip[dot];
+			draw.x = 0; draw.y = 0;
+			draw.Offset(pos.x + sideLength, pos.y);
+			DG::Image_Draw(res->imageName, draw, *numberChip[dot]);
+			sideLength += draw.w;
 		}
-		NomalMove();
-		++animCnt;
-
-		if (DamageEnemy())
-			stateAnim += 2;
-		DamagePlayer();
-	}
-
-	//-------------------------------------------------------------------
-	//State2の動作
-	void Object::Move2()
-	{
-		switch (moveType)
-		{
-		case 0:		//待機
-			if (cntTime == 120)
-			{
-				if (rand() % 2)
-				{
-					moveType = 1;
-					if (rand() % 2)
-					{
-						angleLR = Left;
-						speed.x = -1.5f;
-					}
-					else
-					{
-						angleLR = Right;
-						speed.x = 1.5f;
-					}
-				}
-				else
-				{
-					moveType = 2;
-				}
-			}
-
-		case 1:		//左右移動
-			if (cntTime == 90)
-			{
-				speed.x = 0;
-				moveType = 0;
-			}
-			break;
-			
-		case 2:		//垂直落下
-			if (cntTime == 120)
-			{
-				moveType = rand() % 2;
-			}
-			break;
-
-		default:
-			return;
+		for (int i = 0; i < 2; ++i)
+		{	//小数
+			ML::Box2D draw = *numberChip[numberSmall];
+			draw.x = 0; draw.y = 0;
+			draw.Offset(pos.x + sideLength, pos.y + 10);
+			DG::Image_Draw(res->imageName, draw, *numberChip[numberSmall + decimal[i]]);
+			sideLength += draw.w;
 		}
-		
-		moveY += 3;
-		if (moveType == 2)
-			speed.y = float(sin(ML::ToRadian(moveY))) * 2.4f;
-		else
-			speed.y = float(sin(ML::ToRadian(moveY))) / 1.5f;
-
-
-		if (cntTime == 120)
-			cntTime = 0;
-		else
-			++cntTime;
-
-		pos.y += speed.y;
-		OutCheckMove();
-
-		if (DamageEnemy())
-			stateAnim += 2;
-		DamagePlayer();
-
-		++animCnt;
-	}
-
-	//-------------------------------------------------------------------
-	//State3時の動作
-	void Object::Move3()
-	{
-		if (animCnt > 10)
-		{
-			state = Non;
-			KillMeBaby();
-		}
-		else
-		{
-			++animCnt;
+		{	//メートル
+			ML::Box2D draw = *numberChip[meter];
+			draw.x = 0; draw.y = 0;
+			draw.Offset(pos.x + sideLength, pos.y);
+			DG::Image_Draw(res->imageName, draw, *numberChip[meter]);
 		}
 	}
 
