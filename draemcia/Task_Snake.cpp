@@ -35,10 +35,10 @@ namespace  Snake
 		//★データ初期化
 		imageName = res->imageName;
 
-		render2D_Priority[1] = 0.6f;
+		render2D_Priority[1] = 0.8f;
 		state = State1;		//State1 = 地面ボコボコ
 							//State2 = 本体がぶわーしてシュワー
-							//State3 = 死ぬ間際
+							//Death  = 死ぬ間際
 
 		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
 				float(ge->screen2DHeight) - 51 };
@@ -89,7 +89,7 @@ namespace  Snake
 			Move2();
 			break;
 
-		case BChara::State3: //死ぬ間際
+		case BChara::Death: //死ぬ間際
 			Move3();
 			break;
 
@@ -118,6 +118,7 @@ namespace  Snake
 			stateAnim = 3;
 			moveType = 0;
 			pos.y -= 10;
+			render2D_Priority[1] = 0.7f;
 		}
 		else
 		{

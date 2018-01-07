@@ -99,6 +99,7 @@
     <ClCompile Include="GameEngine_Ver3_7.cpp" />
     <ClCompile Include="myLib.cpp" />
     <ClCompile Include="MyPG.cpp" />
+    <ClCompile Include="Task_BossDragon.cpp" />
     <ClCompile Include="Task_Dramos.cpp" />
     <ClCompile Include="Task_Game.cpp" />
     <ClCompile Include="Task_GameBG.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="GameEngine_Ver3_7.h" />
     <ClInclude Include="myLib.h" />
     <ClInclude Include="MyPG.h" />
+    <ClInclude Include="Task_BossDragon.h" />
     <ClInclude Include="Task_Dramos.h" />
     <ClInclude Include="Task_Game.h" />
     <ClInclude Include="Task_GameBG.h" />

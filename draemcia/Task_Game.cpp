@@ -12,6 +12,7 @@
 #include  "Task_Slime.h"
 #include  "Task_Dramos.h"
 #include  "Task_Snake.h"
+#include  "Task_BossDragon.h"
 
 namespace  Game
 {
@@ -41,6 +42,9 @@ namespace  Game
 		srand((unsigned)time(NULL));
 		monsterAmount = 0;
 		appMonsterTime = 0;
+		score = 0;
+		nextLevelBoader = Next2;
+		level = Level1;
 		
 		//★タスクの生成
 		//背景タスク
@@ -51,6 +55,9 @@ namespace  Game
 		auto  pl = Player::Object::Create(true);
 		//UIタスク
 		auto  ui = UI::Object::Create(true);
+
+		//テスト
+		auto  bd = BossDragon::Object::Create(true);
 
 		return  true;
 	}
@@ -63,6 +70,7 @@ namespace  Game
 		ge->KillAll_G("フィールド");
 		ge->KillAll_G("プレイヤー");
 		ge->KillAll_G("敵");
+		ge->KillAll_G("ボス敵");
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
@@ -77,7 +85,23 @@ namespace  Game
 	{
 		auto in = DI::GPad_GetState("P1");
 
-		if (!(appMonsterTime++ % 10))
+		//レベルの上昇
+		if (score >= nextLevelBoader)
+		{
+			switch (level)
+			{
+			case Level1: level = Level2; nextLevelBoader = Next3; break;
+			case Level2: level = Level3; nextLevelBoader = Next4; break;
+			case Level3: level = Level4; nextLevelBoader = Next5; break;
+			case Level4: level = Level5; nextLevelBoader = Next6; break;
+			case Level5: level = Level6; nextLevelBoader = Next7; break;
+			case Level6: level = Level7; nextLevelBoader = Next8; break;
+			case Level7: level = Level8;						  break;
+			}
+		}
+
+		//モンスターの出現
+		if (!(appMonsterTime++ % int(level)))
 		{
 			if (monsterAmount < MonsterMaxAmount)
 			{

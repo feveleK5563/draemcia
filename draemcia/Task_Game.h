@@ -50,6 +50,31 @@ namespace  Game
 		const int MonsterMaxAmount = 30;	//モンスターの最大量
 		int monsterAmount;					//現在のモンスターの量
 
-		int appMonsterTime;					//モンスターの出現タイミング調整
+		int appMonsterTime;		//敵が出る時間計測
+		int score;				//トックテーン
+		enum NextLevelBoader	//次レベルまでの敵撃破数
+		{
+			Next2 = 20,
+			Next3 = Next2 + 30,
+			Next4 = Next3 + 40,
+			Next5 = Next4 + 50,
+			Next6 = Next5 + 70,
+			Next7 = Next6 + 100,
+			Next8 = Next7 + 300,
+		};
+		NextLevelBoader nextLevelBoader;
+
+		enum LevelofInterval	//モンスターの出現間隔
+		{
+			Level1 = 90,
+			Level2 = 60,
+			Level3 = 40,
+			Level4 = 30,
+			Level5 = 20,
+			Level6 = 10,
+			Level7 = 5,
+			Level8 = 1,
+		};
+		LevelofInterval level;
 	};
 }

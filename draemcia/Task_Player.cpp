@@ -44,9 +44,9 @@ namespace  Player
 		speed.x = -basisSpeed;
 		angleLR = Left;
 
-		state = State1;	//State1… 通常状態
-						//State2… 下攻撃状態
-						//State3… 死亡
+		state = State1;	//State1 = 通常状態
+						//State2 = 下攻撃状態
+						//Death  = 死亡
 
 		hitDamage = false;
 		start = false;
@@ -99,7 +99,7 @@ namespace  Player
 
 		if (start)
 		{
-			if (state != Non && state != State3)
+			if (state != Non && state != Death)
 			{
 				//ボタン入力による移動速度変更
 				ChangeSpeed();
@@ -107,7 +107,7 @@ namespace  Player
 				//画面外判定とX軸移動
 				OutCheckMove();
 			}
-			else if (state == State3)
+			else if (state == Death)
 			{
 				FallAndJump(false);
 			}
@@ -158,7 +158,7 @@ namespace  Player
 			changeDWH = &draw.h;
 			break;
 
-		case State3: //墓
+		case Death: //墓
 			srcNum = 9;
 			break;
 
@@ -184,7 +184,7 @@ namespace  Player
 		}
 
 		//墓状態は以下の処理不要
-		if (state == State3)
+		if (state == Death)
 			return;
 
 		//剣身の表示
@@ -236,7 +236,7 @@ namespace  Player
 		{
 			cpysr.x += src.w;
 			cpysr.w *= -1;
-			if (state == State1 || state == State3)
+			if (state == State1 || state == Death)
 			{
 				switch (i)
 				{

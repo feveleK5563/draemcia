@@ -2,17 +2,17 @@
 //
 //-------------------------------------------------------------------
 #include  "MyPG.h"
-#include  "Task_Dramos.h"
+#include  "Task_BossDragon.h"
 
-namespace Dramos
+namespace  BossDragon
 {
 	Resource::WP  Resource::instance;
 	//-------------------------------------------------------------------
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		imageName = "Dramos";
-		DG::Image_Create(imageName, "./data/image/Dramos.png");
+		imageName = "Dragon";
+		DG::Image_Create(imageName, "./data/image/Dragon.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -33,28 +33,29 @@ namespace Dramos
 
 		//★データ初期化
 		imageName = res->imageName;
-		render2D_Priority[1] = 0.5f;
-		state = State1;		//State1 = 画面上から降下
-							//State2 = ふわふわ飛ぶ
+
+		render2D_Priority[1] = 0.9f;
+		state = State1;		//State1 = 上からドーンと落下して名前表示
+							//State2 = 待機
+							//State3 = 口から地球破壊爆弾
 							//Death  = 死ぬ間際
 
-		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
-				-32 };
-		angleLR = rand() % 2 ? Left : Right;
-		hitBase = { -15, -15, 30, 30 };
+		pos = { 100, -100 };
+		hitBase = { -64, -43, 128, 86 };
+		draw = { -64, -43, 128, 86 };
+		angleLR = Right;
 
 		//キャラチップ読み込み
 		for (int y = 0; y < 2; ++y)
 		{
 			for (int x = 0; x < 2; ++x)
 			{
-				charaChip.emplace_back(new ML::Box2D(x * 32, y * 32, 32, 32));
+				charaChip.emplace_back(new ML::Box2D(x * 128, y * 86, 128, 86));
+				if (y == 0)
+					break;
 			}
 		}
-
-		moveX = 0;
-		moveY = 0;
-
+		
 		//★タスクの生成
 
 		return  true;
@@ -70,7 +71,6 @@ namespace Dramos
 		charaChip.clear();
 		charaChip.shrink_to_fit();
 
-
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成
 		}
@@ -83,20 +83,24 @@ namespace Dramos
 	{
 		switch (state)
 		{
-		case BChara::State1: //画面上から降下
+		case BChara::State1:
 			Move1();
 			break;
 
-		case BChara::State2: //ふわふわ飛ぶ
+		case BChara::State2:
 			Move2();
 			break;
 
-		case BChara::Death: //死ぬ間際
+		case BChara::State3:
 			Move3();
 			break;
 
+		case BChara::Death:
+			Death();
+			break;
+
 		default:
-			return;
+			break;
 		}
 	}
 	//-------------------------------------------------------------------
@@ -110,122 +114,28 @@ namespace Dramos
 	//State1時の動作
 	void Object::Move1()
 	{
-		if (moveY > 180)
-		{
-			moveY = 0;
-			state = State2;
-			speed.y = 0;
-			moveType = rand() % 3;
-			if (moveType == 1)
-			{
-				if (rand() % 2)
-				{
-					angleLR = Left;
-					speed.x = -1.5f;
-				}
-				else
-				{
-					angleLR = Right;
-					speed.x = 1.5f;
-				}
-			}
-		}
-		else
-		{
-			moveY += 2;
-			speed.y = float(sin(ML::ToRadian(moveY))) * 2.5f;
-		}
-		NomalMove();
-		++animCnt;
 
-		if (DamageEnemy())
-			stateAnim += 2;
-		DamagePlayer();
 	}
 
 	//-------------------------------------------------------------------
-	//State2の動作
+	//State2時の動作
 	void Object::Move2()
 	{
-		switch (moveType)
-		{
-		case 0:		//待機
-			if (cntTime == 120)
-			{
-				if (rand() % 2)
-				{
-					moveType = 1;
-					if (rand() % 2)
-					{
-						angleLR = Left;
-						speed.x = -1.5f;
-					}
-					else
-					{
-						angleLR = Right;
-						speed.x = 1.5f;
-					}
-				}
-				else
-				{
-					moveType = 2;
-				}
-			}
 
-		case 1:		//左右移動
-			if (cntTime == 90)
-			{
-				speed.x = 0;
-				moveType = 0;
-			}
-			break;
-			
-		case 2:		//垂直落下
-			if (cntTime == 120)
-			{
-				moveType = rand() % 2;
-			}
-			break;
-
-		default:
-			return;
-		}
-		
-		moveY += 3;
-		if (moveType == 2)
-			speed.y = float(sin(ML::ToRadian(moveY))) * 2.4f;
-		else
-			speed.y = float(sin(ML::ToRadian(moveY))) / 1.5f;
-
-
-		if (cntTime == 120)
-			cntTime = 0;
-		else
-			++cntTime;
-
-		pos.y += speed.y;
-		OutCheckMove();
-
-		if (DamageEnemy())
-			stateAnim += 2;
-		DamagePlayer();
-
-		++animCnt;
 	}
 
 	//-------------------------------------------------------------------
 	//State3時の動作
 	void Object::Move3()
 	{
-		if (animCnt > 10)
-		{
-			state = Non;
-			KillMeBaby();
-		}
-		else
-		{
-			++animCnt;
-		}
+
+	}
+
+	//-------------------------------------------------------------------
+	//Death時の動作
+	void Object::Death()
+	{
+
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

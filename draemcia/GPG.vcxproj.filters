@@ -50,6 +50,9 @@
     <Filter Include="MyPG\Tasks\Game">
       <UniqueIdentifier>{41118a37-7d7a-425a-8804-0da7241edaaa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MyPG\Tasks\Game\Boss">
+      <UniqueIdentifier>{e0470a3d-42ac-48b6-ba9a-f8d2d6667c1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="myLib.cpp">
@@ -139,6 +142,9 @@
     <ClCompile Include="Task_UI.cpp">
       <Filter>MyPG\Tasks\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Task_BossDragon.cpp">
+      <Filter>MyPG\Tasks\Game\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myLib.h">
@@ -224,6 +230,9 @@
     </ClInclude>
     <ClInclude Include="Task_UI.h">
       <Filter>MyPG\Tasks\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Task_BossDragon.h">
+      <Filter>MyPG\Tasks\Game\Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

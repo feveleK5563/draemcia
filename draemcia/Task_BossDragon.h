@@ -3,13 +3,13 @@
 //-------------------------------------------------------------------
 //
 //-------------------------------------------------------------------
-#include "GameEngine_Ver3_7.h"
+#include "EChara.h"
 
-namespace  UI
+namespace  BossDragon
 {
 	//タスクに割り当てるグループ名と固有名
-	const  string  defGroupName("本編");	//グループ名
-	const  string  defName("UI");	//タスク名
+	const  string  defGroupName("ボス敵");	//グループ名
+	const  string  defName("ドラゴン");		//タスク名
 	//-------------------------------------------------------------------
 	class  Resource
 	{
@@ -22,13 +22,13 @@ namespace  UI
 		typedef  weak_ptr<Resource>		WP;
 		static   WP  instance;
 		static  Resource::SP  Create();
+	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 		//共有する変数はここに追加する
 		string imageName;
 	};
 	//-------------------------------------------------------------------
-	class  Object : public  BTask
+	class  Object : public  EChara
 	{
-	//変更不可◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
 	public:
 		virtual  ~Object();
 		typedef  shared_ptr<Object>		SP;
@@ -37,6 +37,7 @@ namespace  UI
 		static  Object::SP  Create(bool flagGameEnginePushBack_);
 		Resource::SP	res;
 	private:
+
 		Object();
 		bool  B_Initialize();
 		bool  B_Finalize();
@@ -44,24 +45,13 @@ namespace  UI
 		void  UpDate();		//「実行」１フレーム毎に行う処理
 		void  Render2D_AF();	//「2D描画」１フレーム毎に行う処理
 		bool  Finalize();		//「終了」タスク消滅時に１回だけ行う処理
-	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 	public:
+	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 		//追加したい変数・メソッドはここに追加する
-		ML::Vec2	pos;				//表示左上座標
-
-		int*		swordLength;		//剣の長さのアドレス
-		float		meterRevision;		//32ドットを1メートルに変換した結果を代入
-		int			integer[2];			//整数
-		int			decimal[2];			//小数
-
-		int			beforeSL;		//1フレーム前の剣の長さ
-		ML::Color	numberColor;	//数字画像の色
-		int			numberSizePlus;	//数字画像の大きさ
-
-		vector<ML::Box2D*>	numberChip;	//数字画像
-		enum Set {numberSmall = 0, 
-				  numberBig = 10,
-				  dot = 20,
-				  meter = 21 };
+		//BCharaに含まれないモノのみここに追加する
+		void Move1();
+		void Move2();
+		void Move3();
+		void Death();
 	};
 }

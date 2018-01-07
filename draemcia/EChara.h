@@ -17,11 +17,13 @@ public:
 
 	int stateAnim;		//状態に応じたアニメーション番号
 	int moveType;		//動作の管理番号
+	ML::Box2D draw;		//表示画像のサイズ(雑魚敵は変更不要)
 
 	EChara() : 
 		imageName(""),
 		stateAnim(0),
-		moveType(0){}
+		moveType(0),
+		draw(-16, -16, 32, 32){}
 
 	~EChara(){}
 

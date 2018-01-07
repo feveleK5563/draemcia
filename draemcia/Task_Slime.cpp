@@ -37,7 +37,7 @@ namespace  Slime
 		render2D_Priority[1] = 0.5f;
 		state = State1;		//State1 = âÊñ â∫Ç©ÇÁîáÇ¢è„Ç™ÇÈìÆÇ´
 							//State2 = ó§è„ÇÇÃÇªÇÃÇª
-							//State3 = éÄÇ ä‘ç€
+							//Death  = éÄÇ ä‘ç€
 
 		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
 				float(ge->screen2DHeight) + 16 };
@@ -87,7 +87,7 @@ namespace  Slime
 			Move2();
 			break;
 
-		case BChara::State3: //éÄÇ ä‘ç€
+		case BChara::Death: //éÄÇ ä‘ç€
 			Move3();
 			break;
 
