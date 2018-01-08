@@ -34,25 +34,25 @@ namespace  BossDragon
 		//★データ初期化
 		imageName = res->imageName;
 
-		render2D_Priority[1] = 0.9f;
+		render2D_Priority[1] = 0.8f;
 		state = State1;		//State1 = 上からドーンと落下して名前表示
-							//State2 = 待機
-							//State3 = 口から地球破壊爆弾
+							//State2 = 待機からの攻撃モーション
+							//State3 = 攻撃
+							//Damage = 被ダメージ
 							//Death  = 死ぬ間際
 
 		pos = { 100, -100 };
-		hitBase = { -64, -43, 128, 86 };
-		draw = { -64, -43, 128, 86 };
+		hitBase = { -64, -43, 128, 90 };
+		atHitBase = { -64, -43, 128, 90 };
+		draw = { -64, -43, 128, 90 };
 		angleLR = Right;
 
 		//キャラチップ読み込み
-		for (int y = 0; y < 2; ++y)
+		for (int y = 0; y < 3; ++y)
 		{
 			for (int x = 0; x < 2; ++x)
 			{
-				charaChip.emplace_back(new ML::Box2D(x * 128, y * 86, 128, 86));
-				if (y == 0)
-					break;
+				charaChip.emplace_back(new ML::Box2D(x * 128, y * 90, 128, 90));
 			}
 		}
 		
@@ -83,19 +83,23 @@ namespace  BossDragon
 	{
 		switch (state)
 		{
-		case BChara::State1:
+		case BChara::State1:	//上からドーン
 			Move1();
 			break;
 
-		case BChara::State2:
+		case BChara::State2:	//待機からの攻撃モーション
 			Move2();
 			break;
 
-		case BChara::State3:
+		case BChara::State3:	//攻撃
 			Move3();
 			break;
 
-		case BChara::Death:
+		case BChara::Damage:	//被ダメージ
+			Damage();
+			break;
+
+		case BChara::Death:		//死の間際
 			Death();
 			break;
 
@@ -112,21 +116,59 @@ namespace  BossDragon
 
 	//-------------------------------------------------------------------
 	//State1時の動作
+	//上からドーン
 	void Object::Move1()
 	{
-
+		if (cntTime > 120)
+		{
+			cntTime = 0;
+			state = State2;
+		}
+		else
+		{
+			++cntTime;
+			FallAndJump(false);
+			CheckFootMove();
+		}
 	}
 
 	//-------------------------------------------------------------------
 	//State2時の動作
+	//待機からの攻撃モーション
 	void Object::Move2()
 	{
-
+		++cntTime;
+		if (cntTime > 60)
+		{
+			stateAnim = 1;
+			if (cntTime > 100)
+			{
+				cntTime = 0;
+				stateAnim = 2;
+				state = State3;
+			}
+		}
 	}
 
 	//-------------------------------------------------------------------
 	//State3時の動作
+	//攻撃
 	void Object::Move3()
+	{
+		++cntTime;
+		++animCnt;
+		if (cntTime > 60)
+		{
+			stateAnim = 0;
+			cntTime = 0;
+			animCnt = 0;
+			state = State2;
+		}
+	}
+
+	//-------------------------------------------------------------------
+	//Damage時の動作
+	void Object::Damage()
 	{
 
 	}

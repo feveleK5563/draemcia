@@ -49,9 +49,11 @@ namespace  BossDragon
 	//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
 		//追加したい変数・メソッドはここに追加する
 		//BCharaに含まれないモノのみここに追加する
+
 		void Move1();
 		void Move2();
 		void Move3();
+		void Damage();
 		void Death();
 	};
 }

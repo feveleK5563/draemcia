@@ -23,6 +23,7 @@ public:
 		State1,		//ó‘Ô1
 		State2,		//ó‘Ô2
 		State3,		//ó‘Ô3
+		Damage,		//”íƒ_ƒ[ƒWó‘Ô
 		Death,		//€
 	};
 	State state;

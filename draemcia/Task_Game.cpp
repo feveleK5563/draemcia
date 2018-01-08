@@ -56,9 +56,6 @@ namespace  Game
 		//UIタスク
 		auto  ui = UI::Object::Create(true);
 
-		//テスト
-		auto  bd = BossDragon::Object::Create(true);
-
 		return  true;
 	}
 	//-------------------------------------------------------------------
@@ -96,12 +93,20 @@ namespace  Game
 			case Level4: level = Level5; nextLevelBoader = Next6; break;
 			case Level5: level = Level6; nextLevelBoader = Next7; break;
 			case Level6: level = Level7; nextLevelBoader = Next8; break;
-			case Level7: level = Level8;						  break;
+			case Level7: level = Level8; nextLevelBoader = Next9; break;
+
+			case Level8:
+			{
+				level = Level9;
+				auto  bd = BossDragon::Object::Create(true);
+			}
+			break;
+
 			}
 		}
 
 		//モンスターの出現
-		if (!(appMonsterTime++ % int(level)))
+		if (int(level) > 0 && !(appMonsterTime++ % int(level)))
 		{
 			if (monsterAmount < MonsterMaxAmount)
 			{

@@ -29,7 +29,7 @@ namespace  Field
 		this->res = Resource::Create();
 
 		//šƒf[ƒ^‰Šú‰»
-		render2D_Priority[1] = 0.8f;
+		render2D_Priority[1] = 0.9f;
 		
 		imageName = "Field";
 		DG::Image_Create(imageName, "./data/image/Field1.png");

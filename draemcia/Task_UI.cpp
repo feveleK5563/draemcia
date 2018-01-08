@@ -67,7 +67,7 @@ namespace  UI
 				height += 32;
 		}
 		numberChip.emplace_back(new ML::Box2D(120, 44,  10, 32)); //.
-		numberChip.emplace_back(new ML::Box2D(120, 76, 40, 32)); //m
+		numberChip.emplace_back(new ML::Box2D(120, 76, 40, 32));  //m
 
 		//ÅöÉ^ÉXÉNÇÃê∂ê¨
 

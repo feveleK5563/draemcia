@@ -94,6 +94,9 @@ namespace  Slime
 		default:
 			return;
 		}
+
+		if (ZakoDelete())
+			stateAnim += 4;
 	}
 	//-------------------------------------------------------------------
 	//u‚Q‚c•`‰æv‚PƒtƒŒ[ƒ€–ˆ‚És‚¤ˆ—

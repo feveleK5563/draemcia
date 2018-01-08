@@ -54,13 +54,14 @@ namespace  Game
 		int score;				//トックテーン
 		enum NextLevelBoader	//次レベルまでの敵撃破数
 		{
-			Next2 = 20,
-			Next3 = Next2 + 30,
-			Next4 = Next3 + 40,
-			Next5 = Next4 + 50,
-			Next6 = Next5 + 70,
-			Next7 = Next6 + 100,
-			Next8 = Next7 + 300,
+			Next2 = 1,
+			Next3 = Next2 + 1,
+			Next4 = Next3 + 1,
+			Next5 = Next4 + 1,
+			Next6 = Next5 + 1,
+			Next7 = Next6 + 1,
+			Next8 = Next7 + 1,
+			Next9 = Next8 + 1,
 		};
 		NextLevelBoader nextLevelBoader;
 
@@ -74,6 +75,7 @@ namespace  Game
 			Level6 = 10,
 			Level7 = 5,
 			Level8 = 1,
+			Level9 = 0,
 		};
 		LevelofInterval level;
 	};

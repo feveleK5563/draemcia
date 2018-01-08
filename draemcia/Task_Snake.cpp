@@ -85,7 +85,7 @@ namespace  Snake
 			Move1();
 			break;
 
-		case BChara::State2: //本体がぶわーしてシュワー
+		case BChara::State2: //本体が出てる
 			Move2();
 			break;
 
@@ -95,6 +95,14 @@ namespace  Snake
 
 		default:
 			return;
+		}
+
+		if (ZakoDelete())
+		{
+			if (0 <= stateAnim && stateAnim <= 2)
+				KillMeBaby();
+			else
+				stateAnim += 3;
 		}
 	}
 	//-------------------------------------------------------------------

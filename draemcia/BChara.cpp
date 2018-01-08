@@ -76,6 +76,7 @@ void BChara::OutCheckMove()
 
 //-------------------------------------------------------------------
 //ジャンプ処理
+//引数：ジャンプするか否か(bool trueでジャンプする)
 void BChara::FallAndJump(bool jumpFlag)
 {
 	//落下運動

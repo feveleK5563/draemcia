@@ -20,12 +20,20 @@ bool EChara::DamageEnemy()
 	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->swordHitBase.OffsetCopy(player->pos)))
 	{
-		state = Death;
-		animCnt = 0;
-		++player->swordLength;
-		if (auto game = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
-			++game->score;
-		return true;
+		if (--life <= 0)
+		{
+			state = Death;
+			animCnt = 0;
+			++player->swordLength;
+			//ボス出現時はモンスター全消去
+			if (auto game = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
+				++game->score;
+			return true;
+		}
+		else
+		{
+			state = Damage;
+		}
 	}
 	return false;
 }
@@ -44,7 +52,7 @@ bool EChara::DamagePlayer()
 	if (player == nullptr || player->state == Death || player->hitDamage)
 		return false;
 
-	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
+	ML::Box2D cpyBase = atHitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->hitBase.OffsetCopy(player->pos)))
 	{
 		player->swordLength -= 10;
@@ -64,6 +72,35 @@ bool EChara::DamagePlayer()
 		return true;
 	}
 	return false;
+}
+
+//-------------------------------------------------------------------
+//ボスモンスターが出現したら雑魚全死亡
+bool EChara::ZakoDelete()
+{
+	if (state == Death)
+		return false;
+
+	if (auto game = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
+	{
+		if (game->level == game->Level9)
+		{
+			state = Death;
+			animCnt = 0;
+			return true;
+		}
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------
+//自分を殺していくスタイル
+void EChara::KillMeBaby()
+{
+	if (auto gm = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
+		--gm->monsterAmount;
+
+	Kill();
 }
 
 //-------------------------------------------------------------------
@@ -96,14 +133,4 @@ void EChara::EnemyRender(int width)
 	ML::Box2D cpydraw = draw.OffsetCopy(pos);
 	DG::Image_Draw(imageName, cpydraw, src, color);
 	RenderFrameRed(hitBase);
-}
-
-//-------------------------------------------------------------------
-//自分を殺していくスタイル
-void EChara::KillMeBaby()
-{
-	if (auto gm = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
-		--gm->monsterAmount;
-
-	Kill();
 }
