@@ -101,6 +101,7 @@
     <ClCompile Include="MyPG.cpp" />
     <ClCompile Include="Task_BossDragon.cpp" />
     <ClCompile Include="Task_Dramos.cpp" />
+    <ClCompile Include="Task_EarthBomb.cpp" />
     <ClCompile Include="Task_Game.cpp" />
     <ClCompile Include="Task_GameBG.cpp" />
     <ClCompile Include="Task_Field.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="MyPG.h" />
     <ClInclude Include="Task_BossDragon.h" />
     <ClInclude Include="Task_Dramos.h" />
+    <ClInclude Include="Task_EarthBomb.h" />
     <ClInclude Include="Task_Game.h" />
     <ClInclude Include="Task_GameBG.h" />
     <ClInclude Include="Task_Field.h" />

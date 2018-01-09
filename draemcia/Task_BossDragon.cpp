@@ -42,10 +42,12 @@ namespace  BossDragon
 							//Death  = 死ぬ間際
 
 		pos = { 100, -100 };
-		hitBase = { -64, -43, 128, 90 };
-		atHitBase = { -64, -43, 128, 90 };
-		draw = { -64, -43, 128, 90 };
+		hitBase		= { -64,  -5, 110, 50 };
+		defHitBase	= { -16, -43,  70, 40 };
+		draw		= { -64, -43, 128, 90 };
 		angleLR = Right;
+
+		life = 10;
 
 		//キャラチップ読み込み
 		for (int y = 0; y < 3; ++y)
@@ -119,7 +121,7 @@ namespace  BossDragon
 	//上からドーン
 	void Object::Move1()
 	{
-		if (cntTime > 120)
+		if (cntTime > 60)
 		{
 			cntTime = 0;
 			state = State2;
@@ -138,16 +140,22 @@ namespace  BossDragon
 	void Object::Move2()
 	{
 		++cntTime;
-		if (cntTime > 60)
+		if (cntTime > 90)
 		{
 			stateAnim = 1;
-			if (cntTime > 100)
+			if (cntTime > 120)
 			{
 				cntTime = 0;
 				stateAnim = 2;
 				state = State3;
 			}
 		}
+
+		if (DamageEnemy())
+		{
+			cntTime = 0;
+		}
+		DamagePlayer();
 	}
 
 	//-------------------------------------------------------------------
@@ -157,27 +165,67 @@ namespace  BossDragon
 	{
 		++cntTime;
 		++animCnt;
-		if (cntTime > 60)
+		if (cntTime > 180)
 		{
 			stateAnim = 0;
 			cntTime = 0;
 			animCnt = 0;
 			state = State2;
 		}
+
+		if (DamageEnemy())
+		{
+			cntTime = 0;
+		}
+		DamagePlayer();
 	}
 
 	//-------------------------------------------------------------------
 	//Damage時の動作
 	void Object::Damage()
 	{
-
+		++cntTime;
+		if (cntTime > 10)
+		{
+			stateAnim = 5;
+			animCnt = 0;
+			if (cntTime > 120)
+			{
+				stateAnim = 0;
+				state = State2;
+				cntTime = 0;
+			}
+		}
+		else
+		{
+			stateAnim = 4;
+			++animCnt;
+		}
 	}
 
 	//-------------------------------------------------------------------
 	//Death時の動作
 	void Object::Death()
 	{
-
+		++cntTime;
+		if (cntTime > 10)
+		{
+			stateAnim = 5;
+			animCnt = 0;
+			if (cntTime > 120)
+			{
+				visible -= 0.02f;
+				if (visible <= 0.f)
+				{
+					Kill();
+				}
+			}
+		}
+		else
+		{
+			stateAnim = 4;
+			++animCnt;
+		}
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

@@ -17,7 +17,7 @@ bool EChara::DamageEnemy()
 	if (player == nullptr || player->state == Death)
 		return false;
 
-	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
+	ML::Box2D cpyBase = defHitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->swordHitBase.OffsetCopy(player->pos)))
 	{
 		if (--life <= 0)
@@ -25,7 +25,6 @@ bool EChara::DamageEnemy()
 			state = Death;
 			animCnt = 0;
 			++player->swordLength;
-			//ボス出現時はモンスター全消去
 			if (auto game = ge->GetTask_One_GN<Game::Object>("本編", "統括"))
 				++game->score;
 			return true;
@@ -33,6 +32,8 @@ bool EChara::DamageEnemy()
 		else
 		{
 			state = Damage;
+			animCnt = 0;
+			return true;
 		}
 	}
 	return false;
@@ -52,7 +53,7 @@ bool EChara::DamagePlayer()
 	if (player == nullptr || player->state == Death || player->hitDamage)
 		return false;
 
-	ML::Box2D cpyBase = atHitBase.OffsetCopy(pos);
+	ML::Box2D cpyBase = hitBase.OffsetCopy(pos);
 	if (cpyBase.Hit(player->hitBase.OffsetCopy(player->pos)))
 	{
 		player->swordLength -= 10;
@@ -111,13 +112,13 @@ void EChara::EnemyRender(int width)
 		return;
 
 	ML::Box2D src;
-	ML::Color color = { 1.f, 1.f, 1.f, 1.f };
+	ML::Color color = { visible, 1.f, 1.f, 1.f };
 
-	if (state == Death)
+	if (state == Death || state == Damage)
 	{
 		src = *charaChip[stateAnim];
 		if (animCnt > 5)
-			color = { 1.f, 1.f, 0.1f, 0.1f };
+			color = { visible, 1.f, 0.1f, 0.1f };
 	}
 	else
 	{
@@ -133,4 +134,5 @@ void EChara::EnemyRender(int width)
 	ML::Box2D cpydraw = draw.OffsetCopy(pos);
 	DG::Image_Draw(imageName, cpydraw, src, color);
 	RenderFrameRed(hitBase);
+	RenderFrameBlue(defHitBase);
 }

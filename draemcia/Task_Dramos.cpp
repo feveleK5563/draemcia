@@ -42,6 +42,7 @@ namespace Dramos
 				-32 };
 		angleLR = rand() % 2 ? Left : Right;
 		hitBase = { -15, -15, 30, 30 };
+		defHitBase = hitBase;
 
 		//キャラチップ読み込み
 		for (int y = 0; y < 2; ++y)
@@ -69,7 +70,6 @@ namespace Dramos
 			delete charaChip[i];
 		charaChip.clear();
 		charaChip.shrink_to_fit();
-
 
 		if (!ge->QuitFlag() && this->nextTaskCreate) {
 			//★引き継ぎタスクの生成

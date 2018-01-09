@@ -44,7 +44,8 @@ namespace  Snake
 				float(ge->screen2DHeight) - 51 };
 		angleLR = rand() % 2 ? Left : Right;
 		hitBase = { -15, -15, 30, 30 };
-		
+		defHitBase = hitBase;
+
 		//キャラチップ読み込み
 		for (int y = 0; y < 3; ++y)
 		{

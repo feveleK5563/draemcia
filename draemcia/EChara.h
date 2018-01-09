@@ -18,16 +18,19 @@ public:
 	int stateAnim;			//状態に応じたアニメーション番号
 	int life;				//体力
 	int moveType;			//動作の管理番号
-	ML::Box2D atHitBase;	//与ダメージ用当たり判定
+	ML::Box2D defHitBase;	//受ダメージ用当たり判定
 	ML::Box2D draw;			//表示画像のサイズ(雑魚敵は変更不要)
+
+	float visible;			//透過度
 
 	EChara() : 
 		imageName(""),
 		stateAnim(0),
 		life(1),
 		moveType(0),
-		atHitBase(hitBase),
-		draw(-16, -16, 32, 32){}
+		defHitBase(0, 0, 0, 0),
+		draw(-16, -16, 32, 32),
+		visible(1.f){}
 
 	~EChara(){}
 

@@ -145,6 +145,9 @@
     <ClCompile Include="Task_BossDragon.cpp">
       <Filter>MyPG\Tasks\Game\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="Task_EarthBomb.cpp">
+      <Filter>MyPG\Tasks\Game\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myLib.h">
@@ -232,6 +235,9 @@
       <Filter>MyPG\Tasks\Game</Filter>
     </ClInclude>
     <ClInclude Include="Task_BossDragon.h">
+      <Filter>MyPG\Tasks\Game\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Task_EarthBomb.h">
       <Filter>MyPG\Tasks\Game\Boss</Filter>
     </ClInclude>
   </ItemGroup>
