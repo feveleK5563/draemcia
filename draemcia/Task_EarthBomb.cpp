@@ -2,18 +2,18 @@
 //
 //-------------------------------------------------------------------
 #include  "MyPG.h"
-#include  "Task_BossDragon.h"
 #include  "Task_EarthBomb.h"
+#include  "Task_BossDragon.h"
 
-namespace  BossDragon
+namespace  EarthBomb
 {
 	Resource::WP  Resource::instance;
 	//-------------------------------------------------------------------
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		imageName = "Dragon";
-		DG::Image_Create(imageName, "./data/image/Dragon.png");
+		imageName = "EarthBomb";
+		DG::Image_Create(imageName, "./data/image/EarthBomb.png");
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -35,30 +35,31 @@ namespace  BossDragon
 		//★データ初期化
 		imageName = res->imageName;
 
-		render2D_Priority[1] = 0.8f;
-		state = State1;		//State1 = 上からドーンと落下して名前表示
-							//State2 = 待機からの攻撃モーション
-							//State3 = 攻撃
-							//Damage = 被ダメージ
-							//Death  = 死ぬ間際
+		render2D_Priority[1] = 0.9f;
 
-		pos = { 100, -100 };
-		hitBase		= { -64,  -5, 110, 50 };
-		defHitBase	= { -16, -43,  70, 40 };
-		draw		= { -64, -43, 128, 90 };
-		angleLR = Right;
+		state = State1;		//State1 = 投下
+							//State2 = 炸裂
 
-		life = 3;
-
-		//キャラチップ読み込み
-		for (int y = 0; y < 3; ++y)
+		if (auto bd = ge->GetTask_One_GN<BossDragon::Object>("ボス敵", "ドラゴン"))
 		{
-			for (int x = 0; x < 2; ++x)
-			{
-				charaChip.emplace_back(new ML::Box2D(x * 128, y * 90, 128, 90));
-			}
+			pos = bd->pos;
+			pos.x += 50;
+			pos.y -= 10;
 		}
+		hitBase = { -32, -16, 64, 32 };
+		draw    = { -32, -16, 64, 32 };
+
+		speed.x = (float(rand() % 70) / 10.f) + 1.f;
+		speed.y = -10.f;
+		angleLR = Right;
 		
+		dokaan = true;
+
+		charaChip.emplace_back(new ML::Box2D(0, 0, 64, 32));
+		for (int i = 0; i < 2; ++i)
+			charaChip.emplace_back(new ML::Box2D(64 * i, 32, 64, 96));
+
+
 		//★タスクの生成
 
 		return  true;
@@ -86,27 +87,12 @@ namespace  BossDragon
 	{
 		switch (state)
 		{
-		case BChara::State1:	//上からドーン
+		case BChara::State1:	//投下
 			Move1();
 			break;
 
-		case BChara::State2:	//待機からの攻撃モーション
+		case BChara::State2:	//炸裂
 			Move2();
-			break;
-
-		case BChara::State3:	//攻撃
-			Move3();
-			break;
-
-		case BChara::Damage:	//被ダメージ
-			Damage();
-			break;
-
-		case BChara::Death:		//死の間際
-			Death();
-			break;
-
-		default:
 			break;
 		}
 	}
@@ -119,113 +105,53 @@ namespace  BossDragon
 
 	//-------------------------------------------------------------------
 	//State1時の動作
-	//上からドーン
 	void Object::Move1()
 	{
-		if (cntTime > 60)
+		if (hitFoot)
 		{
-			cntTime = 0;
 			state = State2;
+			pos.y += 16;
+			hitBase = { -20, -96, 40, 96 };
+			draw = { -32, -96, 64, 96 };
+			stateAnim = 1;
+			return;
 		}
-		else
-		{
-			++cntTime;
-			FallAndJump(false);
-			CheckFootMove();
-		}
+
+		FallAndJump(false);
+		OutCheckMove();
+		CheckFootMove();
 	}
 
 	//-------------------------------------------------------------------
 	//State2時の動作
-	//待機からの攻撃モーション
 	void Object::Move2()
 	{
-		++cntTime;
-		if (cntTime > 90)
-		{
-			stateAnim = 1;
-			if (cntTime > 120)
-			{
-				cntTime = 0;
-				stateAnim = 2;
-				state = State3;
-			}
-		}
-
-		if (DamageEnemy())
-		{
-			cntTime = 0;
-		}
-		DamagePlayer();
-	}
-
-	//-------------------------------------------------------------------
-	//State3時の動作
-	//攻撃
-	void Object::Move3()
-	{
-		++cntTime;
 		++animCnt;
-		if (cntTime > 180)
+		if (animCnt > 60)
 		{
-			stateAnim = 0;
-			cntTime = 0;
-			animCnt = 0;
-			state = State2;
+			visible -= 0.05f;
+			if (visible < 0.f)
+			{
+				Kill();
+			}
+			return;
 		}
-		else if (cntTime % 60 == 1)
+
+		if (dokaan && pos.y > 0 && animCnt % 2)
 		{
+			dokaan = false;
+
 			auto eb = EarthBomb::Object::Create(true);
+			eb->state = State2;
+			eb->pos.x = pos.x;
+			eb->pos.y = pos.y - 96;
+			eb->hitBase = { -20, -96, 40, 96 };
+			eb->draw = { -32, -96, 64, 96 };
+			eb->stateAnim = 1;
+			eb->animCnt = animCnt;
 		}
 
-		if (DamageEnemy())
-		{
-			cntTime = 0;
-		}
 		DamagePlayer();
-	}
-
-	//-------------------------------------------------------------------
-	//Damage時の動作
-	void Object::Damage()
-	{
-		++cntTime;
-		if (cntTime > 10)
-		{
-			stateAnim = 5;
-			animCnt = 0;
-			if (cntTime > 120)
-			{
-				stateAnim = 0;
-				state = State2;
-				cntTime = 0;
-			}
-		}
-		else
-		{
-			stateAnim = 4;
-			++animCnt;
-		}
-	}
-
-	//-------------------------------------------------------------------
-	//Death時の動作
-	void Object::Death()
-	{
-		++cntTime;
-		if (cntTime > 10)
-		{
-			visible -= 0.01f;
-			if (visible <= 0.f)
-			{
-				ge->KillAll_G("ボス敵");
-			}
-		}
-		else
-		{
-			stateAnim = 4;
-			++animCnt;
-		}
 	}
 
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
