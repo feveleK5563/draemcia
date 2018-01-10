@@ -41,7 +41,7 @@ namespace  Snake
 							//Death  = Ž€‚ÊŠÔÛ
 
 		pos = { float(rand() % (int(ge->screen2DWidth) - 32)) + 16,
-				float(ge->screen2DHeight) - 51 };
+				float(ge->screen2DHeight) - 52 };
 		angleLR = rand() % 2 ? Left : Right;
 		hitBase = { -15, -15, 30, 30 };
 		defHitBase = hitBase;
